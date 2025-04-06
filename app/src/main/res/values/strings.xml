@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ScoreCalc</string>
+    <string name="deskripsi_home">Gambar Kalkulator</string>
+    <string name="judul">Selamat Datang</string>
+    <string name="isi">Temukan seberapa jauh pencapaian Anda. Hitung nilai Anda sekarang!</string>
+    <string name="b_nilaiPerMatkul">Hitung per Matkul</string>
+    <string name="b_nilaiSeluruh">Hitung IP Semester</string>
 </resources>
