@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.bagas0060.scorecalc.ui.screen.MainScreen
+import com.bagas0060.scorecalc.navigation.SetupNavGraph
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ScoreCalcTheme {
-                MainScreen()
+                SetupNavGraph()
             }
         }
     }

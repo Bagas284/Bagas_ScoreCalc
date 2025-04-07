@@ -1,8 +1,19 @@
 <resources>
     <string name="app_name">ScoreCalc</string>
-    <string name="deskripsi_home">Gambar Kalkulator</string>
+    <string name="deskripsiLogoHome">Gambar Kalkulator</string>
     <string name="judul">Selamat Datang</string>
     <string name="isi">Temukan seberapa jauh pencapaian Anda. Hitung nilai Anda sekarang!</string>
     <string name="b_nilaiPerMatkul">Hitung per Matkul</string>
     <string name="b_nilaiSeluruh">Hitung IP Semester</string>
+
+    <string name="tentang_aplikasi">Tentang Aplikasi</string>
+    <string name="deskripsiLogoAbout">Gambar Tentang Aplikasi</string>
+    <string name="pertanyaan1">Apa itu ScoreCalc?</string>
+    <string name="jawaban1">ScoreCalc adalah aplikasi yang digunakan untuk menghitung nilai setiap mata kuliah dan Indeks Prestasi (IP)</string>
+    <string name="pertanyaan2">Bagaimana cara menghitung nilai setiap mata kuliah?</string>
+    <string name="jawaban2">Anda hanya perlu memasukkan komponen penilaian (seperti Tugas, UTS, UAS, dan lainnya) beserta nilai dan bobot masing-masing. Aplikasi akan secara otomatis menghitung nilai akhir dan menampilkan indeks nilai.</string>
+    <string name="pertanyaan3">Bagaimana cara menghitung IP?</string>
+    <string name="jawaban3">Anda hanya perlu memasukkan komponen mata kuliah beserta jumlah SKS dalam satu semester. Aplikasi akan secara otomatis menghitung nilai akhir dan menampilkan indeks prestasi.</string>
+    <string name="b_kembali">Kembali</string>
+    <string name="copyright">© 2025 Bagas Aldianata.</string>
 </resources>

@@ -11,8 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,31 +32,54 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bagas0060.scorecalc.R
+import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 
 @Composable
-fun MainScreen(){
-    Scaffold (
-        topBar = { MainTopAppBar() }
-    ){ innerPadding ->
+fun MainScreen(navController: NavHostController) {
+    Scaffold(
+        topBar = {
+            MainTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate(Screen.About.route)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = stringResource(R.string.tentang_aplikasi),
+                            tint = Color.White
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         ScreenContent(Modifier.padding(innerPadding))
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier){
-    Column (
+fun ScreenContent(modifier: Modifier = Modifier) {
+    Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ){
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             painter = painterResource(id = R.drawable.kalkulator),
-            contentDescription = stringResource(R.string.deskripsi_home),
+            contentDescription = stringResource(R.string.deskripsiLogoHome),
             modifier = Modifier.padding(top = 30.dp)
         )
         Text(
@@ -72,7 +99,7 @@ fun ScreenContent(modifier: Modifier = Modifier){
                 .fillMaxWidth()
                 .padding(top = 15.dp)
         ) {
-            ElevatedButton (
+            ElevatedButton(
                 onClick = {},
                 modifier = Modifier
                     .height(50.dp)
@@ -81,11 +108,13 @@ fun ScreenContent(modifier: Modifier = Modifier){
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
             ) {
-                Text(text = stringResource(R.string.b_nilaiPerMatkul),
-                    color = Color.White)
+                Text(
+                    text = stringResource(R.string.b_nilaiPerMatkul),
+                    color = Color.White
+                )
             }
 
-            ElevatedButton (
+            ElevatedButton(
                 onClick = {},
                 modifier = Modifier
                     .height(50.dp)
@@ -105,6 +134,6 @@ fun ScreenContent(modifier: Modifier = Modifier){
 @Composable
 fun MainScreenPreview() {
     ScoreCalcTheme {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }
