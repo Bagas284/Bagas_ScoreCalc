@@ -21,4 +21,15 @@
 
     // Hitung Per Matkul Screen
     <string name="hitung_matkul">Hitung Nilai per Matkul</string>
+    <string name="labelNamaPengguna">Nama Pengguna</string>
+    <string name="labelMataKuliah">Mata Kuliah</string>
+    <string name="labelProgramStudi">Program Studi</string>
+    <string name="labelKomponenPenilaian">Komponen Penilaian</string>
+    <string name="labelNilai">Nilai</string>
+    <string name="labelBobot">Bobot</string>
+    <string name="b_hitung">Hitung</string>
+    <string name="labelDataDiri">Data Diri</string>
+
+    // FAB
+    <string name="buttonTambahKomponen">Tambah Komponen</string>
 </resources>
