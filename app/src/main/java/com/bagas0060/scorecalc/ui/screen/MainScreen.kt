@@ -64,12 +64,12 @@ fun MainScreen(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        ScreenContent(Modifier.padding(innerPadding))
+        ScreenContent(Modifier.padding(innerPadding), navController)
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier) {
+fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostController) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -100,7 +100,7 @@ fun ScreenContent(modifier: Modifier = Modifier) {
                 .padding(top = 15.dp)
         ) {
             ElevatedButton(
-                onClick = {},
+                onClick = { navController.navigate(Screen.Matkul.route) },
                 modifier = Modifier
                     .height(50.dp)
                     .weight(1f)

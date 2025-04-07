@@ -1,4 +1,5 @@
 <resources>
+    // Main Screen
     <string name="app_name">ScoreCalc</string>
     <string name="deskripsiLogoHome">Gambar Kalkulator</string>
     <string name="judul">Selamat Datang</string>
@@ -6,6 +7,7 @@
     <string name="b_nilaiPerMatkul">Hitung per Matkul</string>
     <string name="b_nilaiSeluruh">Hitung IP Semester</string>
 
+    // About Screen
     <string name="tentang_aplikasi">Tentang Aplikasi</string>
     <string name="deskripsiLogoAbout">Gambar Tentang Aplikasi</string>
     <string name="pertanyaan1">Apa itu ScoreCalc?</string>
@@ -16,4 +18,7 @@
     <string name="jawaban3">Anda hanya perlu memasukkan komponen mata kuliah beserta jumlah SKS dalam satu semester. Aplikasi akan secara otomatis menghitung nilai akhir dan menampilkan indeks prestasi.</string>
     <string name="b_kembali">Kembali</string>
     <string name="copyright">© 2025 Bagas Aldianata.</string>
+
+    // Hitung Per Matkul Screen
+    <string name="hitung_matkul">Hitung Nilai per Matkul</string>
 </resources>

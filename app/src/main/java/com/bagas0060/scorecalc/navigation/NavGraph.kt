@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bagas0060.scorecalc.ui.screen.AboutScreen
+import com.bagas0060.scorecalc.ui.screen.HitungMatkulScreen
 import com.bagas0060.scorecalc.ui.screen.MainScreen
 
 @Composable
@@ -19,6 +20,9 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         }
         composable(route = Screen.About.route) {
             AboutScreen(navController)
+        }
+        composable(route = Screen.Matkul.route){
+            HitungMatkulScreen(navController)
         }
     }
 }
