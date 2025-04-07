@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -26,12 +27,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bagas0060.scorecalc.R
 import com.bagas0060.scorecalc.model.KomponenPenilaian
+import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 
@@ -77,6 +79,17 @@ fun HitungMatkulScreen(navController: NavHostController) {
                         fontWeight = FontWeight.Bold
                     )
                 },
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate(Screen.About.route)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = stringResource(R.string.tentang_aplikasi),
+                            tint = Color.White
+                        )
+                    }
+                }
             )
         },
         floatingActionButton = {
@@ -115,6 +128,9 @@ fun HitungMatkulContent(
     var mataKuliah by remember { mutableStateOf("") }
     var programStudi by remember { mutableStateOf("") }
 
+    var rerata by remember { mutableFloatStateOf(0f) }
+    var kategori by remember { mutableStateOf("") }
+
     val options = listOf(
         "Semester 1",
         "Semester 2",
@@ -132,7 +148,8 @@ fun HitungMatkulContent(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 84.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
@@ -163,7 +180,7 @@ fun HitungMatkulContent(
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true),
+                    .menuAnchor(),
                 readOnly = true,
                 value = selectedOptionText,
                 onValueChange = {},
@@ -285,7 +302,16 @@ fun HitungMatkulContent(
         }
 
         Button(
-            onClick = {},
+            onClick = {
+                var total = 0f
+                komponenList.forEach { komponen ->
+                    val nilai = komponen.nilai.toFloat()
+                    val bobot = komponen.bobot.toFloat()
+                    total += hitungNilaiMatkul(nilai, bobot)
+                }
+                rerata = total
+                kategori = getKategoriNilai(total)
+            },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
             contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
@@ -295,8 +321,42 @@ fun HitungMatkulContent(
             Text(
                 stringResource(R.string.b_hitung),
                 color = Color.White
-                )
+            )
         }
+
+        // Tampilan hasil
+        if (rerata != 0f){
+            Text(
+                text = kategori,
+                style = MaterialTheme.typography.displayLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally),
+                color = colorResource(R.color.red)
+            )
+            Text(
+                text = stringResource(R.string.totalHitung, rerata),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+            )
+        }
+    }
+}
+
+private fun hitungNilaiMatkul(nilai: Float, bobot: Float): Float{
+    return (nilai * bobot) / 100
+}
+
+private fun getKategoriNilai(nilai: Float): String {
+    return when {
+        nilai > 85 -> "A"
+        nilai > 75 -> "AB"
+        nilai > 65 -> "B"
+        nilai > 60 -> "BC"
+        nilai > 50 -> "C"
+        nilai > 40 -> "D"
+        else -> "E"
     }
 }
 

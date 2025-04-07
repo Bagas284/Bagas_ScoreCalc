@@ -29,6 +29,7 @@
     <string name="labelBobot">Bobot</string>
     <string name="b_hitung">Hitung</string>
     <string name="labelDataDiri">Data Diri</string>
+    <string name="totalHitung">Rata - rata: %1$.2f</string>
 
     // FAB
     <string name="buttonTambahKomponen">Tambah Komponen</string>
