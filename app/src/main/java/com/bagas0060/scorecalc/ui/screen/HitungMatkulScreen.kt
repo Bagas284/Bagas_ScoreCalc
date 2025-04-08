@@ -36,8 +36,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,7 +60,25 @@ import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 
 @Composable
 fun HitungMatkulScreen(navController: NavHostController) {
-    val komponenList = remember { mutableStateListOf(KomponenPenilaian()) }
+    val komponenList = rememberSaveable(
+        saver = listSaver(
+            save = { list -> list.map { listOf(it.nama, it.nilai, it.bobot, it.namaError, it.nilaiError, it.bobotError) } },
+            restore = { restored ->
+                restored.map {
+                    KomponenPenilaian(
+                        nama = it[0] as String,
+                        nilai = it[1] as String,
+                        bobot = it[2] as String,
+                        namaError = it[3] as Boolean,
+                        nilaiError = it[4] as Boolean,
+                        bobotError = it[5] as Boolean
+                    )
+                }.toMutableStateList()
+            }
+        )
+    ) {
+        mutableStateListOf(KomponenPenilaian())
+    }
 
     Scaffold(
         topBar = {
@@ -125,17 +145,17 @@ fun HitungMatkulContent(
     komponenList: List<KomponenPenilaian>,
     onUpdateKomponen: (Int, KomponenPenilaian) -> Unit
 ) {
-    var namaPengguna by remember { mutableStateOf("") }
-    var namaPenggunaError by remember { mutableStateOf(false) }
+    var namaPengguna by rememberSaveable { mutableStateOf("") }
+    var namaPenggunaError by rememberSaveable { mutableStateOf(false) }
 
-    var programStudi by remember { mutableStateOf("") }
-    var programStudiError by remember { mutableStateOf(false) }
+    var programStudi by rememberSaveable { mutableStateOf("") }
+    var programStudiError by rememberSaveable { mutableStateOf(false) }
 
-    var mataKuliah by remember { mutableStateOf("") }
-    var mataKuliahError by remember { mutableStateOf(false) }
+    var mataKuliah by rememberSaveable { mutableStateOf("") }
+    var mataKuliahError by rememberSaveable { mutableStateOf(false) }
 
-    var rerata by remember { mutableFloatStateOf(0f) }
-    var kategori by remember { mutableStateOf("") }
+    var rerata by rememberSaveable { mutableFloatStateOf(0f) }
+    var kategori by rememberSaveable { mutableStateOf("") }
 
     val options = listOf(
         "Semester 1",
@@ -147,9 +167,9 @@ fun HitungMatkulContent(
         "Semester 7",
         "Semester 8"
     )
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf("") }
-    var semesterError by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selectedOptionText by rememberSaveable { mutableStateOf("") }
+    var semesterError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
