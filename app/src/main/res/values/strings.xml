@@ -32,6 +32,9 @@
     <string name="labelDataDiri">Data Diri</string>
     <string name="totalHitung">Rata - rata: %1$.2f</string>
 
+    // Hitung Ip Screen
+    <string name="hitung_ip">Hitung IP Semester</string>
+
     // FAB
     <string name="buttonTambahKomponen">Tambah Komponen</string>
 
