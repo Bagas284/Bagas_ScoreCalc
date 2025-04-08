@@ -206,7 +206,7 @@ fun HitungMatkulContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Dropdown Prodi
+        // Dropdown Semester
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -367,7 +367,7 @@ fun HitungMatkulContent(
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Next
                         ),
                         modifier = Modifier.weight(1f)
                     )
