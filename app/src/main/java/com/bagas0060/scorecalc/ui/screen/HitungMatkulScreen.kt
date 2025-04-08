@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -125,8 +126,13 @@ fun HitungMatkulContent(
     onUpdateKomponen: (Int, KomponenPenilaian) -> Unit
 ) {
     var namaPengguna by remember { mutableStateOf("") }
-    var mataKuliah by remember { mutableStateOf("") }
+    var namaPenggunaError by remember { mutableStateOf(false) }
+
     var programStudi by remember { mutableStateOf("") }
+    var programStudiError by remember { mutableStateOf(false) }
+
+    var mataKuliah by remember { mutableStateOf("") }
+    var mataKuliahError by remember { mutableStateOf(false) }
 
     var rerata by remember { mutableFloatStateOf(0f) }
     var kategori by remember { mutableStateOf("") }
@@ -142,7 +148,8 @@ fun HitungMatkulContent(
         "Semester 8"
     )
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf("Semester") }
+    var selectedOptionText by remember { mutableStateOf("") }
+    var semesterError by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -154,7 +161,7 @@ fun HitungMatkulContent(
     ) {
         Text(
             text = stringResource(R.string.labelDataDiri),
-            style = MaterialTheme.typography.titleLarge ,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -163,7 +170,9 @@ fun HitungMatkulContent(
             value = namaPengguna,
             onValueChange = { namaPengguna = it },
             label = { Text(stringResource(R.string.labelNamaPengguna)) },
-            // isError
+            trailingIcon = { IconPicker(namaPenggunaError) },
+            supportingText = { ErrorHint(namaPenggunaError) },
+            isError = namaPenggunaError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -184,6 +193,13 @@ fun HitungMatkulContent(
                 readOnly = true,
                 value = selectedOptionText,
                 onValueChange = {},
+                label = { Text(stringResource(R.string.labelPilihSemester)) },
+                isError = semesterError,
+                supportingText = {
+                    if (semesterError) {
+                        Text(stringResource(R.string.dropdown_invalid))
+                    }
+                },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },
@@ -215,7 +231,9 @@ fun HitungMatkulContent(
             value = programStudi,
             onValueChange = { programStudi = it },
             label = { Text(stringResource(R.string.labelProgramStudi)) },
-            // isError
+            trailingIcon = { IconPicker(programStudiError) },
+            supportingText = { ErrorHint(programStudiError) },
+            isError = programStudiError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -229,7 +247,9 @@ fun HitungMatkulContent(
             value = mataKuliah,
             onValueChange = { mataKuliah = it },
             label = { Text(stringResource(R.string.labelMataKuliah)) },
-            // isError
+            trailingIcon = { IconPicker(mataKuliahError) },
+            supportingText = { ErrorHint(mataKuliahError) },
+            isError = mataKuliahError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -242,7 +262,7 @@ fun HitungMatkulContent(
 
         Text(
             text = stringResource(R.string.labelKomponenPenilaian),
-            style = MaterialTheme.typography.titleLarge ,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -253,11 +273,17 @@ fun HitungMatkulContent(
                 OutlinedTextField(
                     value = komponen.nama,
                     onValueChange = {
-                        onUpdateKomponen(index, komponen.copy(nama = it))
+                        val isValid = it.isNotBlank() && it.matches(Regex("^[a-zA-Z0-9\\s]+\$"))
+                        onUpdateKomponen(index, komponen.copy(nama = it, namaError  = !isValid))
                     },
                     label = { Text(stringResource(R.string.labelKomponenPenilaian)) },
-                    // isError
                     singleLine = true,
+                    isError = komponen.namaError,
+                    supportingText = {
+                        if(komponen.namaError){
+                            Text(stringResource(R.string.input_invalid))
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -269,10 +295,22 @@ fun HitungMatkulContent(
                     OutlinedTextField(
                         value = komponen.nilai,
                         onValueChange = {
-                            onUpdateKomponen(index, komponen.copy(nilai = it))
+                            val value = it.toFloatOrNull()
+                            val isValid = value != null && value in 0f..100f
+                            onUpdateKomponen(
+                                index, komponen.copy(
+                                    nilai = it,
+                                    nilaiError = !isValid
+                                )
+                            )
                         },
                         label = { Text(stringResource(R.string.labelNilai)) },
-                        // isError
+                        isError = komponen.nilaiError,
+                        supportingText = {
+                            if (komponen.nilaiError) {
+                                Text(stringResource(R.string.nilai_invalid))
+                            }
+                        },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -284,11 +322,23 @@ fun HitungMatkulContent(
                     OutlinedTextField(
                         value = komponen.bobot,
                         onValueChange = {
-                            onUpdateKomponen(index, komponen.copy(bobot = it))
+                            val value = it.toFloatOrNull()
+                            val isValid = value != null && value in 1f..100f
+                            onUpdateKomponen(
+                                index, komponen.copy(
+                                    bobot = it,
+                                    bobotError = !isValid
+                                )
+                            )
                         },
                         label = { Text(stringResource(R.string.labelBobot)) },
-                        // isError
-                        trailingIcon = { Text(text = "%")},
+                        isError = komponen.bobotError,
+                        supportingText = {
+                            if (komponen.bobotError) {
+                                Text(stringResource(R.string.bobot_invalid))
+                            }
+                        },
+                        trailingIcon = { Text(text = "%") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -303,12 +353,43 @@ fun HitungMatkulContent(
 
         Button(
             onClick = {
+                namaPenggunaError =
+                    (namaPengguna.isBlank() || !namaPengguna.matches(Regex("^[a-zA-Z\\s]+$")))
+                programStudiError =
+                    (programStudi.isBlank() || !programStudi.matches(Regex("^[a-zA-Z0-9\\s]+$")))
+                mataKuliahError =
+                    (mataKuliah.isBlank() || !mataKuliah.matches(Regex("^[a-zA-Z0-9\\s]+$")))
+                semesterError = (selectedOptionText == "")
+
                 var total = 0f
-                komponenList.forEach { komponen ->
-                    val nilai = komponen.nilai.toFloat()
-                    val bobot = komponen.bobot.toFloat()
-                    total += hitungNilaiMatkul(nilai, bobot)
+                var valid = true
+                komponenList.forEachIndexed { index, komponen ->
+                    val nilai = komponen.nilai.toFloatOrNull()
+                    val bobot = komponen.bobot.toFloatOrNull()
+                    val namaValid = komponen.nama.isNotBlank() && komponen.nama.matches(Regex("^[a-zA-Z0-9\\s]+\$"))
+
+                    if (nilai == null || bobot == null || !namaValid) {
+                        onUpdateKomponen(
+                            index, komponen.copy(
+                                nilaiError = nilai == null,
+                                bobotError = bobot == null,
+                                namaError = !namaValid
+                            )
+                        )
+                        valid = false
+                    } else {
+                        total += hitungNilaiMatkul(nilai, bobot)
+                    }
                 }
+
+                if (
+                    namaPenggunaError ||
+                    programStudiError ||
+                    mataKuliahError ||
+                    semesterError ||
+                    !valid
+                ) return@Button
+
                 rerata = total
                 kategori = getKategoriNilai(total)
             },
@@ -325,7 +406,7 @@ fun HitungMatkulContent(
         }
 
         // Tampilan hasil
-        if (rerata != 0f){
+        if (rerata != 0f) {
             Text(
                 text = kategori,
                 style = MaterialTheme.typography.displayLarge,
@@ -344,7 +425,21 @@ fun HitungMatkulContent(
     }
 }
 
-private fun hitungNilaiMatkul(nilai: Float, bobot: Float): Float{
+@Composable
+fun IconPicker(isError: Boolean) {
+    if (isError) {
+        Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
+    }
+}
+
+@Composable
+fun ErrorHint(isError: Boolean) {
+    if (isError) {
+        Text(stringResource(R.string.input_invalid))
+    }
+}
+
+private fun hitungNilaiMatkul(nilai: Float, bobot: Float): Float {
     return (nilai * bobot) / 100
 }
 

@@ -27,10 +27,17 @@
     <string name="labelKomponenPenilaian">Komponen Penilaian</string>
     <string name="labelNilai">Nilai</string>
     <string name="labelBobot">Bobot</string>
+    <string name="labelPilihSemester">Semester</string>
     <string name="b_hitung">Hitung</string>
     <string name="labelDataDiri">Data Diri</string>
     <string name="totalHitung">Rata - rata: %1$.2f</string>
 
     // FAB
     <string name="buttonTambahKomponen">Tambah Komponen</string>
+
+    // Sanity check
+    <string name="input_invalid">Input tidak valid. Harap isi dengan benar.</string>
+    <string name="dropdown_invalid">Silakan pilih semester Anda</string>
+    <string name="nilai_invalid">Input antara 0 sampai 100</string>
+    <string name="bobot_invalid">Input antara 1 sampai 100</string>
 </resources>
