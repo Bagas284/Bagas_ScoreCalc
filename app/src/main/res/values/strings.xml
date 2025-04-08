@@ -40,4 +40,8 @@
     <string name="dropdown_invalid">Silakan pilih semester Anda</string>
     <string name="nilai_invalid">Input antara 0 sampai 100</string>
     <string name="bobot_invalid">Input antara 1 sampai 100</string>
+
+    // Share
+    <string name="b_kirim">Bagikan</string>
+    <string name="bagikan_template">Nama: %1$s\nSemester: %2$s\nProgram Studi: %3$s\nMata kuliah: %4$s\n\nKomponen penilaian:\n%5$s\n\nRata-rata: %6$.2f\nIndeks: %7$s</string>
 </resources>
