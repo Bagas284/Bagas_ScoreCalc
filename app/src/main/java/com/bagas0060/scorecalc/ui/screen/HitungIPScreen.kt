@@ -169,6 +169,7 @@ fun HitungIPContent(
     var semesterError by rememberSaveable { mutableStateOf(false) }
 
     var totalIp by rememberSaveable { mutableFloatStateOf(0f)}
+    var jumlahSeluruhSks by rememberSaveable { mutableFloatStateOf(0f) }
 
     val context = LocalContext.current
 
@@ -379,11 +380,12 @@ fun HitungIPContent(
                     } else {
                         valid = false
                     }
-                    rumusHitungIp = totalSksIndeks / totalSKS
+                    rumusHitungIp = if(totalSKS != 0f) totalSksIndeks / totalSKS  else 0f
                 }
                 if(namaPenggunaError || programStudiError || semesterError || !valid) return@Button
 
                 totalIp = rumusHitungIp
+                jumlahSeluruhSks = totalSKS
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
@@ -399,6 +401,14 @@ fun HitungIPContent(
 
         if (totalIp != 0f) {
             Text(
+                text = stringResource(R.string.sksTotal, jumlahSeluruhSks),
+                style = MaterialTheme.typography.displayLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally),
+                color = colorResource(R.color.red)
+            )
+            Text(
                 text = stringResource(R.string.ipSemester, totalIp),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
@@ -408,7 +418,7 @@ fun HitungIPContent(
             Button(
                 onClick = {
                     val dataPenilaian = komponenList.joinToString ("\n"){ komponen ->
-                        "- ${komponen.nama}: SKS ${komponen.sks}, Indeks ${komponen.indeks}"
+                        "- ${komponen.nama}: SKS ${komponen.sks}, Indeks ${komponen.indeks.uppercase()}"
                     }
                     shareData (
                         context = context,
@@ -418,7 +428,8 @@ fun HitungIPContent(
                             selectedOptionText,
                             programStudi,
                             dataPenilaian,
-                            totalIp
+                            totalIp,
+                            jumlahSeluruhSks
                         )
                     )
                 },
