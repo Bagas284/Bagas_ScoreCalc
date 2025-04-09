@@ -6,6 +6,9 @@
     <string name="isi">Temukan seberapa jauh pencapaian Anda. Hitung nilai Anda sekarang!</string>
     <string name="b_nilaiPerMatkul">Hitung per Matkul</string>
     <string name="b_nilaiSeluruh">Hitung IP Semester</string>
+    <string name="menuOverflow">Menu Overflow</string>
+    <string name="tanyaAplikasi">Tanya Aplikasi</string>
+    <string name="penilaian">Kirim Masukkan</string>
 
     // About Screen
     <string name="tentang_aplikasi">Tentang Aplikasi</string>

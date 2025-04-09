@@ -12,15 +12,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +50,7 @@ import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 fun MainScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
+            var expanded by remember { mutableStateOf(false)}
             MainTopAppBar(
                 title = {
                     Text(
@@ -52,12 +60,37 @@ fun MainScreen(navController: NavHostController) {
                 },
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(Screen.About.route)
+                        expanded = true
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = stringResource(R.string.tentang_aplikasi),
+                            imageVector = Icons.Outlined.MoreVert,
+                            contentDescription = stringResource(R.string.menuOverflow),
                             tint = Color.White
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false}
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.tentang_aplikasi))},
+                            onClick = {
+                                navController.navigate(Screen.About.route)
+                            }
+                        )
+                        HorizontalDivider()
+
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.tanyaAplikasi))},
+                            onClick = {}
+                        )
+
+                        HorizontalDivider()
+
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.penilaian))},
+                            onClick = {}
                         )
                     }
                 }
