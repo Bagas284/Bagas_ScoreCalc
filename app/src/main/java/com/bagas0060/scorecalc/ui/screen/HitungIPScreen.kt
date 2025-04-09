@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +37,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -125,8 +127,10 @@ fun HitungIPContent(
     onUpdateKomponen: (Int, KomponenPenilaian) -> Unit
 ) {
     var namaPengguna by remember { mutableStateOf("") }
+    var namaPenggunaError by remember { mutableStateOf(false) }
 
     var programStudi by remember { mutableStateOf("") }
+    var programStudiError by remember { mutableStateOf(false) }
 
     val options = listOf(
         "Semester 1",
@@ -140,6 +144,7 @@ fun HitungIPContent(
     )
     var expanded by remember { mutableStateOf(false) }
     var selectedOptionText by remember { mutableStateOf("") }
+    var semesterError by rememberSaveable { mutableStateOf(false) }
 
     var totalIp by remember { mutableFloatStateOf(0f)}
 
@@ -162,6 +167,9 @@ fun HitungIPContent(
             value = namaPengguna,
             onValueChange = { namaPengguna = it },
             label = { Text(stringResource(R.string.labelNamaPengguna)) },
+            trailingIcon = { IconPickerIp(namaPenggunaError) },
+            supportingText = { ErrorHintIp(namaPenggunaError) },
+            isError = namaPenggunaError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -183,6 +191,12 @@ fun HitungIPContent(
                 value = selectedOptionText,
                 onValueChange = {},
                 label = { Text(stringResource(R.string.labelPilihSemester)) },
+                isError = semesterError,
+                supportingText = {
+                    if (semesterError) {
+                        Text(stringResource(R.string.dropdown_invalid))
+                    }
+                },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },
@@ -214,6 +228,9 @@ fun HitungIPContent(
             value = programStudi,
             onValueChange = { programStudi = it },
             label = { Text(stringResource(R.string.labelProgramStudi)) },
+            trailingIcon = { IconPickerIp(programStudiError) },
+            supportingText = { ErrorHintIp(programStudiError) },
+            isError = programStudiError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -241,6 +258,12 @@ fun HitungIPContent(
                     },
                     label = { Text(stringResource(R.string.labelMataKuliah)) },
                     singleLine = true,
+                    isError = komponen.namaError,
+                    supportingText = {
+                        if(komponen.namaError){
+                            Text(stringResource(R.string.input_invalid))
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -254,12 +277,18 @@ fun HitungIPContent(
                         onValueChange = {
                             onUpdateKomponen(
                                 index, komponen.copy(
-                                    sks = it,
+                                    sks = it
                                 )
                             )
                         },
                         label = { Text(stringResource(R.string.labelSKS)) },
                         singleLine = true,
+                        isError = komponen.sksError,
+                        supportingText = {
+                            if (komponen.sksError) {
+                                Text(stringResource(R.string.input_invalid))
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next
@@ -272,12 +301,18 @@ fun HitungIPContent(
                         onValueChange = {
                             onUpdateKomponen(
                                 index, komponen.copy(
-                                    indeks = it,
+                                    indeks = it
                                 )
                             )
                         },
                         label = { Text(stringResource(R.string.labelIndeks)) },
                         singleLine = true,
+                        isError = komponen.indeksError,
+                        supportingText = {
+                            if(komponen.indeksError){
+                                Text(stringResource(R.string.input_invalid))
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done
@@ -290,18 +325,39 @@ fun HitungIPContent(
         }
         Button(
             onClick = {
+                namaPenggunaError = (namaPengguna.isBlank() || !namaPengguna.matches(Regex("^[a-zA-Z\\s]+$")))
+                programStudiError = (programStudi.isBlank() || !programStudi.matches(Regex("^[a-zA-Z0-9\\s]+$")))
+                semesterError = (selectedOptionText == "")
+
                 var totalSksIndeks = 0f
                 var totalSKS = 0f
                 var rumusHitungIp = 0f
-                komponenList.forEach { komponen ->
-                    val sks = komponen.sks.toFloat()
+
+                var valid = true
+                komponenList.forEachIndexed {index,  komponen ->
+                    val namaValid = komponen.nama.isNotBlank() && komponen.nama.matches(Regex("^[a-zA-Z0-9\\s]+\$"))
+                    val sks = komponen.sks.toFloatOrNull()
                     val indeks = komponen.indeks
+                    val indeksValid = indeks.matches(Regex("^[a-eA-E]{1,2}$"))
 
-                    totalSksIndeks += hitungIP(sks, indeks)
-                    totalSKS += sks
+                    onUpdateKomponen(
+                        index, komponen.copy(
+                            namaError = !namaValid,
+                            sksError = sks == null,
+                            indeksError = !indeksValid
+                        )
+                    )
 
+                    if (namaValid && sks != null && indeksValid) {
+                        totalSksIndeks += hitungIP(sks, indeks)
+                        totalSKS += sks
+                    } else {
+                        valid = false
+                    }
                     rumusHitungIp = totalSksIndeks / totalSKS
                 }
+                if(namaPenggunaError || programStudiError || semesterError || !valid) return@Button
+
                 totalIp = rumusHitungIp
             },
             modifier = Modifier
@@ -327,6 +383,20 @@ fun HitungIPContent(
     }
 }
 
+@Composable
+fun IconPickerIp(isError: Boolean){
+    if(isError){
+        Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
+    }
+}
+
+@Composable
+fun ErrorHintIp(isError: Boolean) {
+    if (isError) {
+        Text(stringResource(R.string.input_invalid))
+    }
+}
+
 private fun hitungIP(sks: Float, indeks: String): Float{
     val nam = kategoriIndeks(indeks)
     return (sks * nam)
@@ -340,6 +410,7 @@ private fun kategoriIndeks(indeks: String):Float{
         "BC" -> 2.5f
         "C" -> 2.0f
         "D" -> 1.0f
+        "E" -> 0f
         else -> 0f
     }
 }
