@@ -36,9 +36,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,7 +60,25 @@ import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 
 @Composable
 fun HitungIPScreen(navController: NavHostController) {
-    val komponenList = remember { mutableStateListOf(KomponenPenilaian()) }
+    val komponenList = rememberSaveable(
+        saver = listSaver(
+            save = { list -> list.map { listOf(it.nama, it.sks, it.indeks, it.namaError, it.sksError, it.indeksError) } },
+            restore = { restored ->
+                restored.map {
+                    KomponenPenilaian(
+                        nama = it[0] as String,
+                        sks = it[1] as String,
+                        indeks = it[2] as String,
+                        namaError = it[3] as Boolean,
+                        sksError = it[4] as Boolean,
+                        indeksError = it[5] as Boolean
+                    )
+                }.toMutableStateList()
+            }
+        )
+    ) {
+        mutableStateListOf(KomponenPenilaian())
+    }
 
     Scaffold(
         topBar = {
@@ -126,11 +145,11 @@ fun HitungIPContent(
     komponenList: List<KomponenPenilaian>,
     onUpdateKomponen: (Int, KomponenPenilaian) -> Unit
 ) {
-    var namaPengguna by remember { mutableStateOf("") }
-    var namaPenggunaError by remember { mutableStateOf(false) }
+    var namaPengguna by rememberSaveable { mutableStateOf("") }
+    var namaPenggunaError by rememberSaveable { mutableStateOf(false) }
 
-    var programStudi by remember { mutableStateOf("") }
-    var programStudiError by remember { mutableStateOf(false) }
+    var programStudi by rememberSaveable { mutableStateOf("") }
+    var programStudiError by rememberSaveable { mutableStateOf(false) }
 
     val options = listOf(
         "Semester 1",
@@ -142,11 +161,11 @@ fun HitungIPContent(
         "Semester 7",
         "Semester 8"
     )
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf("") }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selectedOptionText by rememberSaveable { mutableStateOf("") }
     var semesterError by rememberSaveable { mutableStateOf(false) }
 
-    var totalIp by remember { mutableFloatStateOf(0f)}
+    var totalIp by rememberSaveable { mutableFloatStateOf(0f)}
 
     Column(
         modifier = modifier
