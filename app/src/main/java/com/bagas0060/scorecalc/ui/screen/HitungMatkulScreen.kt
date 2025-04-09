@@ -298,8 +298,7 @@ fun HitungMatkulContent(
                 OutlinedTextField(
                     value = komponen.nama,
                     onValueChange = {
-                        val isValid = it.isNotBlank() && it.matches(Regex("^[a-zA-Z0-9\\s]+\$"))
-                        onUpdateKomponen(index, komponen.copy(nama = it, namaError  = !isValid))
+                        onUpdateKomponen(index, komponen.copy(nama = it))
                     },
                     label = { Text(stringResource(R.string.labelKomponenPenilaian)) },
                     singleLine = true,
@@ -320,12 +319,9 @@ fun HitungMatkulContent(
                     OutlinedTextField(
                         value = komponen.nilai,
                         onValueChange = {
-                            val value = it.toFloatOrNull()
-                            val isValid = value != null && value in 0f..100f
                             onUpdateKomponen(
                                 index, komponen.copy(
-                                    nilai = it,
-                                    nilaiError = !isValid
+                                    nilai = it
                                 )
                             )
                         },
@@ -347,12 +343,9 @@ fun HitungMatkulContent(
                     OutlinedTextField(
                         value = komponen.bobot,
                         onValueChange = {
-                            val value = it.toFloatOrNull()
-                            val isValid = value != null && value in 1f..100f
                             onUpdateKomponen(
                                 index, komponen.copy(
-                                    bobot = it,
-                                    bobotError = !isValid
+                                    bobot = it
                                 )
                             )
                         },
@@ -378,8 +371,7 @@ fun HitungMatkulContent(
 
         Button(
             onClick = {
-                namaPenggunaError =
-                    (namaPengguna.isBlank() || !namaPengguna.matches(Regex("^[a-zA-Z\\s]+$")))
+                namaPenggunaError = (namaPengguna.isBlank() || !namaPengguna.matches(Regex("^[a-zA-Z\\s]+$")))
                 programStudiError =
                     (programStudi.isBlank() || !programStudi.matches(Regex("^[a-zA-Z0-9\\s]+$")))
                 mataKuliahError =
@@ -393,17 +385,21 @@ fun HitungMatkulContent(
                     val bobot = komponen.bobot.toFloatOrNull()
                     val namaValid = komponen.nama.isNotBlank() && komponen.nama.matches(Regex("^[a-zA-Z0-9\\s]+\$"))
 
-                    if (nilai == null || bobot == null || !namaValid) {
-                        onUpdateKomponen(
-                            index, komponen.copy(
-                                nilaiError = nilai == null,
-                                bobotError = bobot == null,
-                                namaError = !namaValid
-                            )
+                    val nilaiValid = nilai != null && nilai in 0f..100f
+                    val bobotValid = bobot != null && bobot in 1f..100f
+
+                    onUpdateKomponen(
+                        index, komponen.copy(
+                            nilaiError = !nilaiValid,
+                            bobotError = !bobotValid,
+                            namaError = !namaValid
                         )
-                        valid = false
+                    )
+
+                    if (namaValid && nilaiValid && bobotValid) {
+                        total += hitungNilaiMatkul(nilai!!, bobot!!)
                     } else {
-                        total += hitungNilaiMatkul(nilai, bobot)
+                        valid = false
                     }
                 }
 

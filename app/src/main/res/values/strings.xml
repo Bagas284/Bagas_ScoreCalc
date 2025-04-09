@@ -46,6 +46,7 @@
     <string name="dropdown_invalid">Silakan pilih semester Anda</string>
     <string name="nilai_invalid">Input antara 0 sampai 100</string>
     <string name="bobot_invalid">Input antara 1 sampai 100</string>
+    <string name="sks_invalid">Input antara 1 sampai 6</string>
 
     // Share
     <string name="b_kirim">Bagikan</string>

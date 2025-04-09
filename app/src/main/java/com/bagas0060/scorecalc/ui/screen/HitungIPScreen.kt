@@ -310,7 +310,7 @@ fun HitungIPContent(
                         isError = komponen.sksError,
                         supportingText = {
                             if (komponen.sksError) {
-                                Text(stringResource(R.string.input_invalid))
+                                Text(stringResource(R.string.sks_invalid))
                             }
                         },
                         keyboardOptions = KeyboardOptions(
@@ -364,16 +364,17 @@ fun HitungIPContent(
                     val indeks = komponen.indeks
                     val indeksValid = indeks.matches(Regex("^[a-eA-E]{1,2}$"))
 
+                    val sksValid = sks != null && sks in 1f..6f
                     onUpdateKomponen(
                         index, komponen.copy(
                             namaError = !namaValid,
-                            sksError = sks == null,
+                            sksError = !sksValid,
                             indeksError = !indeksValid
                         )
                     )
 
-                    if (namaValid && sks != null && indeksValid) {
-                        totalSksIndeks += hitungIP(sks, indeks)
+                    if (namaValid && sksValid && indeksValid) {
+                        totalSksIndeks += hitungIP(sks!!, indeks)
                         totalSKS += sks
                     } else {
                         valid = false
