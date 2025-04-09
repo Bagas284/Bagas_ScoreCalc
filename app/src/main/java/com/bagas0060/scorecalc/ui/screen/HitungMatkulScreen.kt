@@ -367,7 +367,7 @@ fun HitungMatkulContent(
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Next
+                            imeAction = ImeAction.Done
                         ),
                         modifier = Modifier.weight(1f)
                     )

@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -140,6 +141,8 @@ fun HitungIPContent(
     var expanded by remember { mutableStateOf(false) }
     var selectedOptionText by remember { mutableStateOf("") }
 
+    var totalIp by remember { mutableFloatStateOf(0f)}
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -167,7 +170,7 @@ fun HitungIPContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Dropdown Semseter
+        // Dropdown Semester
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -247,11 +250,11 @@ fun HitungIPContent(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(
-                        value = komponen.nilai,
+                        value = komponen.sks,
                         onValueChange = {
                             onUpdateKomponen(
                                 index, komponen.copy(
-                                    nilai = it,
+                                    sks = it,
                                 )
                             )
                         },
@@ -265,19 +268,19 @@ fun HitungIPContent(
                     )
 
                     OutlinedTextField(
-                        value = komponen.bobot,
+                        value = komponen.indeks,
                         onValueChange = {
                             onUpdateKomponen(
                                 index, komponen.copy(
-                                    bobot = it,
+                                    indeks = it,
                                 )
                             )
                         },
                         label = { Text(stringResource(R.string.labelIndeks)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Next
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
                         ),
                         modifier = Modifier.weight(1f)
                     )
@@ -286,7 +289,21 @@ fun HitungIPContent(
             HorizontalDivider()
         }
         Button(
-            onClick = {},
+            onClick = {
+                var totalSksIndeks = 0f
+                var totalSKS = 0f
+                var rumusHitungIp = 0f
+                komponenList.forEach { komponen ->
+                    val sks = komponen.sks.toFloat()
+                    val indeks = komponen.indeks
+
+                    totalSksIndeks += hitungIP(sks, indeks)
+                    totalSKS += sks
+
+                    rumusHitungIp = totalSksIndeks / totalSKS
+                }
+                totalIp = rumusHitungIp
+            },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
             contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
@@ -298,6 +315,32 @@ fun HitungIPContent(
                 color = Color.White
             )
         }
+
+        if (totalIp != 0f) {
+            Text(
+                text = stringResource(R.string.totalHitung, totalIp),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+            )
+        }
+    }
+}
+
+private fun hitungIP(sks: Float, indeks: String): Float{
+    val nam = kategoriIndeks(indeks)
+    return (sks * nam)
+}
+
+private fun kategoriIndeks(indeks: String):Float{
+    return when (indeks.uppercase()){
+        "A" -> 4.0f
+        "AB" -> 3.5f
+        "B" -> 3.0f
+        "BC" -> 2.5f
+        "C" -> 2.0f
+        "D" -> 1.0f
+        else -> 0f
     }
 }
 
