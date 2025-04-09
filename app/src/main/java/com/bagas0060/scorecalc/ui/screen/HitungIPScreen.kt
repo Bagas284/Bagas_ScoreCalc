@@ -1,5 +1,7 @@
 package com.bagas0060.scorecalc.ui.screen
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,6 +45,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -166,6 +169,8 @@ fun HitungIPContent(
     var semesterError by rememberSaveable { mutableStateOf(false) }
 
     var totalIp by rememberSaveable { mutableFloatStateOf(0f)}
+
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -393,11 +398,40 @@ fun HitungIPContent(
 
         if (totalIp != 0f) {
             Text(
-                text = stringResource(R.string.totalHitung, totalIp),
+                text = stringResource(R.string.ipSemester, totalIp),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
                     .align(alignment = Alignment.CenterHorizontally)
             )
+
+            Button(
+                onClick = {
+                    val dataPenilaian = komponenList.joinToString ("\n"){ komponen ->
+                        "- ${komponen.nama}: SKS ${komponen.sks}, Indeks ${komponen.indeks}"
+                    }
+                    shareData (
+                        context = context,
+                        message = context.getString(
+                            R.string.bagikan_ip,
+                            namaPengguna,
+                            selectedOptionText,
+                            programStudi,
+                            dataPenilaian,
+                            totalIp
+                        )
+                    )
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
+            ) {
+                Text(
+                    stringResource(R.string.b_kirim),
+                    color = Color.White
+                )
+            }
         }
     }
 }
@@ -413,6 +447,16 @@ fun IconPickerIp(isError: Boolean){
 fun ErrorHintIp(isError: Boolean) {
     if (isError) {
         Text(stringResource(R.string.input_invalid))
+    }
+}
+
+private fun shareData(context: Context, message: String){
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, message)
+    }
+    if (shareIntent.resolveActivity(context.packageManager) != null){
+        context.startActivity(shareIntent)
     }
 }
 

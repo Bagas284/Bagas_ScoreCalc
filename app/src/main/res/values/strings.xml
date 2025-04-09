@@ -36,6 +36,7 @@
     <string name="hitung_ip">Hitung IP Semester</string>
     <string name="labelSKS">SKS</string>
     <string name="labelIndeks">Indeks</string>
+    <string name="ipSemester">IP Semester: %1$.2f</string>
 
     // FAB
     <string name="buttonTambahKomponen">Tambah Komponen</string>
@@ -49,4 +50,5 @@
     // Share
     <string name="b_kirim">Bagikan</string>
     <string name="bagikan_template">Nama: %1$s\nSemester: %2$s\nProgram Studi: %3$s\nMata kuliah: %4$s\n\nKomponen penilaian:\n%5$s\n\nRata-rata: %6$.2f\nIndeks: %7$s</string>
+    <string name="bagikan_ip">Nama: %1$s\nSemester: %2$s\nProgram Studi: %3$s\n\nKomponen penilaian:\n%4$s\n\nIP Semester: %5$.2f</string>
 </resources>
