@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    // Main Screen
+    <string name="app_name">ScoreCalc</string>
+    <string name="deskripsiLogoHome">Calculator Image</string>
+    <string name="judul">Welcome</string>
+    <string name="isi">Find out how far you have come. Calculate your score now!</string>
+    <string name="b_nilaiPerMatkul">Calculate by Course</string>
+    <string name="b_nilaiSeluruh">Calculate GPA</string>
+    <string name="menuOverflow">Overflow Menu</string>
+    <string name="tanyaAplikasi">Ask About App</string>
+    <string name="penilaian">Send Feedback</string>
+
+    // About Screen
+    <string name="tentang_aplikasi">About the App</string>
+    <string name="deskripsiLogoAbout">About App Image</string>
+    <string name="pertanyaan1">What is ScoreCalc?</string>
+    <string name="jawaban1">ScoreCalc is an application used to calculate individual course scores and GPA (Grade Point Average).</string>
+    <string name="pertanyaan2">How to calculate a course score?</string>
+    <string name="jawaban2">You just need to enter the assessment components (such as assignments, midterms, finals, etc.) along with their respective scores and weights. The app will automatically calculate the final score and display the grade index.</string>
+    <string name="pertanyaan3">How to calculate GPA?</string>
+    <string name="jawaban3">You just need to input the course components and the number of credits (SKS) in one semester. The app will automatically calculate the final score and display the GPA.</string>
+    <string name="b_kembali">Back</string>
+    <string name="copyright">© 2025 Bagas Aldianata.</string>
+
+    // Calculate Per Course Screen
+    <string name="hitung_matkul">Calculate Score per Course</string>
+    <string name="labelNamaPengguna">User Name</string>
+    <string name="labelMataKuliah">Course Name</string>
+    <string name="labelProgramStudi">Study Program</string>
+    <string name="labelKomponenPenilaian">Assessment Component</string>
+    <string name="labelNilai">Score</string>
+    <string name="labelBobot">Weight</string>
+    <string name="labelPilihSemester">Semester</string>
+    <string name="b_hitung">Calculate</string>
+    <string name="labelDataDiri">Personal Data</string>
+    <string name="totalHitung">Average: %1$.2f</string>
+
+    // GPA Screen
+    <string name="hitung_ip">Calculate Semester GPA</string>
+    <string name="labelSKS">Credits</string>
+    <string name="labelIndeks">Grade Index</string>
+    <string name="ipSemester">Semester GPA: %1$.2f</string>
+    <string name="sksTotal">%1$.0f Credits</string>
+
+    // FAB
+    <string name="buttonTambahKomponen">Add Component</string>
+
+    // Sanity check
+    <string name="input_invalid">Invalid input. Please fill in correctly.</string>
+    <string name="dropdown_invalid">Please select your semester</string>
+    <string name="nilai_invalid">Input between 0 and 100</string>
+    <string name="bobot_invalid">Input between 1 and 100</string>
+    <string name="sks_invalid">Input between 1 and 6</string>
+
+    // Share
+    <string name="b_kirim">Share</string>
+    <string name="bagikan_template">Name: %1$s\nSemester: %2$s\nStudy Program: %3$s\nCourse: %4$s\n\nAssessment Components:\n%5$s\n\nAverage: %6$.2f\nGrade Index: %7$s</string>
+    <string name="bagikan_ip">Name: %1$s\nSemester: %2$s\nStudy Program: %3$s\n\nAssessment Components:\n%4$s\n\nSemester GPA: %5$.2f\nTotal Credits: %6$.0f Credits</string>
+</resources>
