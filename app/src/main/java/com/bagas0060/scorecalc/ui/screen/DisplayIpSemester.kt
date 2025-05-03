@@ -1,14 +1,18 @@
 package com.bagas0060.scorecalc.ui.screen
 
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -23,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -89,21 +94,24 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier) {
 
     val groupedData = data.groupBy { Triple(it.namaPengguna, it.semester, it.prodi) }
 
+    val context = LocalContext.current
+
     if (data.isEmpty()) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Text(stringResource(id = R.string.list_kosong))
         }
     } else {
         LazyColumn(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 84.dp)
         ) {
-            groupedData.forEach { (key, list) ->
+            groupedData.forEach { (key, ipList) ->
                 val (nama, semester, prodi) = key
 
                 item {
@@ -114,7 +122,7 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier) {
                     ) {
                         Text(
                             text = "Nama: $nama",
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.titleMedium,
                         )
                         Text(
                             text = "Program Studi: $prodi",
@@ -133,10 +141,10 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier) {
                     }
                 }
 
-                items(list.size) { index ->
-                    ListItemIpSemester(ipSemester = list[index])
-                    if ( list.size > 1 && index != list.lastIndex) {
-                        HorizontalDivider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                items(ipList) { ipSemester ->
+                    ListItemIpSemester(ipSemester = ipSemester) {
+                        val pesan = context.getString(R.string.x_diklik, ipSemester.namaPengguna)
+                        Toast.makeText(context, pesan, Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -149,10 +157,11 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ListItemIpSemester(ipSemester: IpSemester) {
+fun ListItemIpSemester(ipSemester: IpSemester, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 7.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {

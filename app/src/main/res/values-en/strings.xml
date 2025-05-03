@@ -60,4 +60,5 @@
 
     // Display Ip Semester
     <string name="list_kosong">empty data</string>
+    <string name="x_diklik">%1$s clicked!</string>
 </resources>

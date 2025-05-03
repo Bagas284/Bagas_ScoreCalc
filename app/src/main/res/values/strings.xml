@@ -59,4 +59,5 @@
     
     // Display Ip Semester
     <string name="list_kosong">Belum ada data</string>
+    <string name="x_diklik">Nilai %1$s diklik!</string>
 </resources>

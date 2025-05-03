@@ -28,7 +28,25 @@ class MainViewModel: ViewModel() {
             3,
             "Daffa Akhadi",
             "3",
-            "D4 RPLA",
+            "D3 RPLA",
+            "PBO",
+            4,
+            "A"
+        ),
+        IpSemester(
+            4,
+            "Daffa Akhadi",
+            "3",
+            "D3 RPLA",
+            "PBO",
+            4,
+            "A"
+        ),
+        IpSemester(
+            5,
+            "Farhan",
+            "4",
+            "D3 RPLA",
             "PBO",
             4,
             "A"
