@@ -148,7 +148,7 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
             }
 
             ElevatedButton(
-                onClick = { navController.navigate((Screen.IP.route))},
+                onClick = { navController.navigate((Screen.DisplayIpSemester.route))},
                 modifier = Modifier
                     .height(50.dp)
                     .weight(1f)
