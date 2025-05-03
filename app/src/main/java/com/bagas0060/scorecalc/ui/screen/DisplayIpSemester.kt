@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -76,7 +79,7 @@ fun DisplayIpSemester(navController: NavHostController) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(R.string.buttonTambahKomponen),
+                    contentDescription = stringResource(R.string.hitung_ip),
                     tint = Color.White
                 )
             }
@@ -115,30 +118,58 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier) {
                 val (nama, semester, prodi) = key
 
                 item {
-                    Column(
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFF0F0F0)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
-                        Text(
-                            text = "Nama: $nama",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = "Program Studi: $prodi",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                        ) {
+                            Text(
+                                text = "Semester $semester",
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF333333)
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 12.dp),
+                                textAlign = TextAlign.Center
+                            )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = Color.Gray.copy(alpha = 0.3f)
+                            )
 
-                        Text(
-                            text = "Semester $semester",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = "Nama: $nama",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = Color.DarkGray
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Text(
+                                text = "Program Studi: $prodi",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = Color.DarkGray
+                                )
+                            )
+                        }
                     }
+
                 }
 
                 items(ipList) { ipSemester ->
@@ -146,6 +177,7 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier) {
                         val pesan = context.getString(R.string.x_diklik, ipSemester.namaPengguna)
                         Toast.makeText(context, pesan, Toast.LENGTH_SHORT).show()
                     }
+                    HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
                 }
 
                 item {
