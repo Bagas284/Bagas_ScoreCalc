@@ -9,7 +9,7 @@ class MainViewModel: ViewModel() {
         IpSemester(
             1,
             "Bagas Aldianata",
-            "Semester 3",
+            "3",
             "D3 RPLA",
             "IJK",
             3,
@@ -18,9 +18,18 @@ class MainViewModel: ViewModel() {
         IpSemester(
             2,
             "Bagas Aldianata",
-            "Semester 3",
+            "3",
             "D3 RPLA",
             "IMA",
+            4,
+            "A"
+        ),
+        IpSemester(
+            3,
+            "Daffa Akhadi",
+            "3",
+            "D4 RPLA",
+            "PBO",
             4,
             "A"
         )
