@@ -26,9 +26,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +46,7 @@ import com.bagas0060.scorecalc.model.IpSemester
 import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
+import com.bagas0060.scorecalc.util.ViewModelFactory
 
 @Composable
 fun DisplayIpSemester(navController: NavHostController) {
@@ -89,9 +93,10 @@ fun DisplayIpSemester(navController: NavHostController) {
 
 @Composable
 fun DisplayIpSemesterContent(modifier: Modifier = Modifier, navController: NavHostController) {
-    val viewModel: MainViewModel = viewModel()
-    val data = viewModel.data
-//    val data = emptyList<IpSemester>()
+    val context = LocalContext.current
+    val factory = ViewModelFactory(context)
+    val viewModel: MainViewModel = viewModel(factory = factory)
+    val data by viewModel.data.collectAsState()
 
     val groupedData = data.groupBy { Triple(it.namaPengguna, it.semester, it.prodi) }
 

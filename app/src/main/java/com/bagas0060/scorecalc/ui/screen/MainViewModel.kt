@@ -1,59 +1,22 @@
 package com.bagas0060.scorecalc.ui.screen
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.bagas0060.scorecalc.database.IPSemesterDao
 import com.bagas0060.scorecalc.model.IpSemester
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 
-class MainViewModel: ViewModel() {
+class MainViewModel(daoIp: IPSemesterDao): ViewModel() {
 
-    val data = listOf(
-        IpSemester(
-            1,
-            "Bagas Aldianata",
-            "3",
-            "D3 RPLA",
-            "IJK",
-            3,
-            "A"
-        ),
-        IpSemester(
-            2,
-            "Bagas Aldianata",
-            "3",
-            "D3 RPLA",
-            "IMA",
-            4,
-            "A"
-        ),
-        IpSemester(
-            3,
-            "Daffa Akhadi",
-            "3",
-            "D3 RPLA",
-            "PBO",
-            4,
-            "A"
-        ),
-        IpSemester(
-            4,
-            "Daffa Akhadi",
-            "3",
-            "D3 RPLA",
-            "PBO",
-            4,
-            "A"
-        ),
-        IpSemester(
-            5,
-            "Farhan",
-            "4",
-            "D3 RPLA",
-            "PBO",
-            4,
-            "A"
-        )
+    val data: StateFlow<List<IpSemester>> = daoIp.getIpSemester().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
     )
 
     fun getNilaiIpSemester(id: Long): IpSemester? {
-        return data.find { it.id == id }
+        return data.value.find { it.id == id }
     }
 }
