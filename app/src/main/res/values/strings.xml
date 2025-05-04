@@ -31,16 +31,15 @@
     <string name="labelNilai">Nilai</string>
     <string name="labelBobot">Bobot</string>
     <string name="labelPilihSemester">Semester</string>
-    <string name="b_hitung">Hitung</string>
+    <string name="b_simpan">Simpan</string>
     <string name="labelDataDiri">Data Diri</string>
     <string name="totalHitung">Rata - rata: %1$.2f</string>
 
     // Hitung Ip Screen
-    <string name="hitung_ip">Hitung IP Semester</string>
+    <string name="tambah">Tambah IP Semester</string>
+    <string name="edit">Edit IP Semester</string>
     <string name="labelSKS">SKS</string>
     <string name="labelIndeks">Indeks</string>
-    <string name="ipSemester">IP Semester: %1$.2f</string>
-    <string name="sksTotal">%1$.0f SKS</string>
 
     // FAB
     <string name="buttonTambahKomponen">Tambah Komponen</string>

@@ -1,7 +1,5 @@
 package com.bagas0060.scorecalc.ui.screen
 
-import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
@@ -25,7 +22,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,18 +30,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,34 +44,36 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bagas0060.scorecalc.R
-import com.bagas0060.scorecalc.model.KomponenPenilaian
 import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 
+const val KEY_ID_IPSEMESTER = "ipSemester"
+
 @Composable
-fun HitungIPScreen(navController: NavHostController) {
-    val komponenList = rememberSaveable(
-        saver = listSaver(
-            save = { list -> list.map { listOf(it.nama, it.sks, it.indeks, it.namaError, it.sksError, it.indeksError) } },
-            restore = { restored ->
-                restored.map {
-                    KomponenPenilaian(
-                        nama = it[0] as String,
-                        sks = it[1] as String,
-                        indeks = it[2] as String,
-                        namaError = it[3] as Boolean,
-                        sksError = it[4] as Boolean,
-                        indeksError = it[5] as Boolean
-                    )
-                }.toMutableStateList()
-            }
-        )
-    ) {
-        mutableStateListOf(KomponenPenilaian())
+fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
+    var namaPengguna by rememberSaveable { mutableStateOf("") }
+    var selectedOptionText by rememberSaveable { mutableStateOf("") }
+    var programStudi by rememberSaveable { mutableStateOf("") }
+    var mataKuliah by rememberSaveable { mutableStateOf("") }
+    var sks by rememberSaveable { mutableStateOf("") }
+    var indeks by rememberSaveable { mutableStateOf("") }
+
+    val viewModel: MainViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        if (id == null)return@LaunchedEffect
+        val data = viewModel.getNilaiIpSemester(id) ?: return@LaunchedEffect
+        namaPengguna = data.namaPengguna
+        selectedOptionText = data.semester
+        programStudi = data.prodi
+        mataKuliah = data.mataKuliah
+        sks = data.sks.toString()
+        indeks = data.indeks
     }
 
     Scaffold(
@@ -98,10 +91,17 @@ fun HitungIPScreen(navController: NavHostController) {
                     }
                 },
                 title = {
-                    Text(
-                        text = stringResource(R.string.hitung_ip),
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (id == null) {
+                        Text(
+                            text = stringResource(R.string.tambah),
+                            fontWeight = FontWeight.Bold
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.edit),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 },
                 actions = {
                     IconButton(onClick = {
@@ -115,28 +115,23 @@ fun HitungIPScreen(navController: NavHostController) {
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    komponenList.add(KomponenPenilaian())
-                },
-                containerColor = colorResource(R.color.red),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(R.string.buttonTambahKomponen),
-                    tint = Color.White
-                )
-            }
         }
     ) { innerPadding ->
         HitungIPContent(
+            userName = namaPengguna,
+            onUserNameChange = { namaPengguna = it},
+            semester = selectedOptionText,
+            onSemesterChange = { selectedOptionText = it},
+            studyProgram = programStudi,
+            onStudyProgramChange = { programStudi = it},
+            subject = mataKuliah,
+            onSubjectChange = { mataKuliah = it},
+            credit = sks,
+            onCreditChange = { sks = it},
+            indeks = indeks,
+            onIndeksChange = { indeks = it},
             modifier = Modifier.padding(innerPadding),
-            komponenList = komponenList,
-            onUpdateKomponen = { index, newValue ->
-                komponenList[index] = newValue
-            }
+            navController = navController
         )
     }
 }
@@ -145,15 +140,18 @@ fun HitungIPScreen(navController: NavHostController) {
 @Composable
 fun HitungIPContent(
     modifier: Modifier = Modifier,
-    komponenList: List<KomponenPenilaian>,
-    onUpdateKomponen: (Int, KomponenPenilaian) -> Unit
+    userName: String, onUserNameChange: (String) -> Unit,
+    semester: String, onSemesterChange: (String) -> Unit,
+    studyProgram: String, onStudyProgramChange: (String) -> Unit,
+    subject: String, onSubjectChange: (String) -> Unit,
+    credit: String, onCreditChange: (String) -> Unit,
+    indeks: String, onIndeksChange: (String) -> Unit,
+    navController: NavHostController
 ) {
-    var namaPengguna by rememberSaveable { mutableStateOf("") }
+    // nama pengguna
     var namaPenggunaError by rememberSaveable { mutableStateOf(false) }
 
-    var programStudi by rememberSaveable { mutableStateOf("") }
-    var programStudiError by rememberSaveable { mutableStateOf(false) }
-
+    // Semester
     val options = listOf(
         "Semester 1",
         "Semester 2",
@@ -165,13 +163,19 @@ fun HitungIPContent(
         "Semester 8"
     )
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var selectedOptionText by rememberSaveable { mutableStateOf("") }
     var semesterError by rememberSaveable { mutableStateOf(false) }
 
-    var totalIp by rememberSaveable { mutableFloatStateOf(0f)}
-    var jumlahSeluruhSks by rememberSaveable { mutableFloatStateOf(0f) }
+    // Prodi
+    var programStudiError by rememberSaveable { mutableStateOf(false) }
 
-    val context = LocalContext.current
+    // Mata kuliah
+    var mataKuliahError by rememberSaveable { mutableStateOf(false) }
+
+    // SKS
+    var sksError by rememberSaveable { mutableStateOf(false) }
+
+    // Indeks
+    var indeksError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -189,8 +193,8 @@ fun HitungIPContent(
 
         // Input nama pengguna
         OutlinedTextField(
-            value = namaPengguna,
-            onValueChange = { namaPengguna = it },
+            value = userName,
+            onValueChange = { onUserNameChange(it) },
             label = { Text(stringResource(R.string.labelNamaPengguna)) },
             trailingIcon = { IconPickerIp(namaPenggunaError) },
             supportingText = { ErrorHintIp(namaPenggunaError) },
@@ -213,7 +217,7 @@ fun HitungIPContent(
                     .fillMaxWidth()
                     .menuAnchor(),
                 readOnly = true,
-                value = selectedOptionText,
+                value = semester,
                 onValueChange = {},
                 label = { Text(stringResource(R.string.labelPilihSemester)) },
                 isError = semesterError,
@@ -239,7 +243,7 @@ fun HitungIPContent(
                     DropdownMenuItem(
                         text = { Text(option) },
                         onClick = {
-                            selectedOptionText = option
+                            onSemesterChange(option)
                             expanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -250,8 +254,8 @@ fun HitungIPContent(
 
         // Input Prodi
         OutlinedTextField(
-            value = programStudi,
-            onValueChange = { programStudi = it },
+            value = studyProgram,
+            onValueChange = { onStudyProgramChange(it) },
             label = { Text(stringResource(R.string.labelProgramStudi)) },
             trailingIcon = { IconPickerIp(programStudiError) },
             supportingText = { ErrorHintIp(programStudiError) },
@@ -272,185 +276,89 @@ fun HitungIPContent(
             fontWeight = FontWeight.SemiBold
         )
 
-        komponenList.forEachIndexed { index, komponen ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            OutlinedTextField(
+                value = subject,
+                onValueChange = { onSubjectChange(it) },
+                label = { Text(stringResource(R.string.labelMataKuliah)) },
+                singleLine = true,
+                isError = mataKuliahError,
+                supportingText = { ErrorHintIp(mataKuliahError) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
-                    value = komponen.nama,
-                    onValueChange = {
-                        onUpdateKomponen(index, komponen.copy(nama = it))
-                    },
-                    label = { Text(stringResource(R.string.labelMataKuliah)) },
+                    value = credit,
+                    onValueChange = { onCreditChange(it) },
+                    label = { Text(stringResource(R.string.labelSKS)) },
                     singleLine = true,
-                    isError = komponen.namaError,
+                    isError = sksError,
                     supportingText = {
-                        if(komponen.namaError){
-                            Text(stringResource(R.string.input_invalid))
+                        if (sksError) {
+                            Text(stringResource(R.string.sks_invalid))
                         }
                     },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.weight(1f)
                 )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = komponen.sks,
-                        onValueChange = {
-                            onUpdateKomponen(
-                                index, komponen.copy(
-                                    sks = it
-                                )
-                            )
-                        },
-                        label = { Text(stringResource(R.string.labelSKS)) },
-                        singleLine = true,
-                        isError = komponen.sksError,
-                        supportingText = {
-                            if (komponen.sksError) {
-                                Text(stringResource(R.string.sks_invalid))
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Next
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    OutlinedTextField(
-                        value = komponen.indeks,
-                        onValueChange = {
-                            onUpdateKomponen(
-                                index, komponen.copy(
-                                    indeks = it
-                                )
-                            )
-                        },
-                        label = { Text(stringResource(R.string.labelIndeks)) },
-                        singleLine = true,
-                        isError = komponen.indeksError,
-                        supportingText = {
-                            if(komponen.indeksError){
-                                Text(stringResource(R.string.input_invalid))
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                OutlinedTextField(
+                    value = indeks,
+                    onValueChange = { onIndeksChange(it) },
+                    label = { Text(stringResource(R.string.labelIndeks)) },
+                    singleLine = true,
+                    isError = indeksError,
+                    supportingText = { ErrorHintIp(indeksError) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    modifier = Modifier.weight(1f)
+                )
             }
-            HorizontalDivider()
         }
         Button(
             onClick = {
-                namaPenggunaError = (namaPengguna.isBlank() || !namaPengguna.matches(Regex("^[a-zA-Z\\s]+$")))
-                programStudiError = (programStudi.isBlank() || !programStudi.matches(Regex("^[a-zA-Z0-9\\s]+$")))
-                semesterError = (selectedOptionText == "")
+                namaPenggunaError =
+                    (userName.isBlank() || !userName.matches(Regex("^[a-zA-Z\\s]+$")))
+                programStudiError =
+                    (studyProgram.isBlank() || !studyProgram.matches(Regex("^[a-zA-Z0-9\\s]+$")))
+                semesterError = (semester == "")
+                mataKuliahError = (subject.isBlank() || !subject.matches(Regex("^[a-zA-Z\\s]+$")))
+                sksError = (credit.isBlank() || !credit.matches(Regex("^[1-6]$")))
+                indeksError = (indeks.isBlank() || !indeks.matches(Regex("^[a-eA-E]{1,2}$")))
 
-                var totalSksIndeks = 0f
-                var totalSKS = 0f
-                var rumusHitungIp = 0f
-
-                var valid = true
-                komponenList.forEachIndexed {index,  komponen ->
-                    val namaValid = komponen.nama.isNotBlank() && komponen.nama.matches(Regex("^[a-zA-Z0-9\\s]+\$"))
-                    val sks = komponen.sks.toFloatOrNull()
-                    val indeks = komponen.indeks
-                    val indeksValid = indeks.matches(Regex("^[a-eA-E]{1,2}$"))
-
-                    val sksValid = sks != null && sks in 1f..6f
-                    onUpdateKomponen(
-                        index, komponen.copy(
-                            namaError = !namaValid,
-                            sksError = !sksValid,
-                            indeksError = !indeksValid
-                        )
-                    )
-
-                    if (namaValid && sksValid && indeksValid) {
-                        totalSksIndeks += hitungIP(sks!!, indeks)
-                        totalSKS += sks
-                    } else {
-                        valid = false
-                    }
-                    rumusHitungIp = if(totalSKS != 0f) totalSksIndeks / totalSKS  else 0f
+                if (namaPenggunaError || programStudiError || semesterError || mataKuliahError || sksError || indeksError){
+                    return@Button
                 }
-                if(namaPenggunaError || programStudiError || semesterError || !valid) return@Button
-
-                totalIp = rumusHitungIp
-                jumlahSeluruhSks = totalSKS
+                navController.popBackStack()
             },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
             contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
+            colors = ButtonDefaults.buttonColors(colorResource(R.color.red)),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                stringResource(R.string.b_hitung),
+                stringResource(R.string.b_simpan),
                 color = Color.White
             )
-        }
-
-        if (totalIp != 0f) {
-            Text(
-                text = stringResource(R.string.sksTotal, jumlahSeluruhSks),
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally),
-                color = colorResource(R.color.red)
-            )
-            Text(
-                text = stringResource(R.string.ipSemester, totalIp),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally)
-            )
-
-            Button(
-                onClick = {
-                    val dataPenilaian = komponenList.joinToString ("\n"){ komponen ->
-                        "- ${komponen.nama}: SKS ${komponen.sks}, Indeks ${komponen.indeks.uppercase()}"
-                    }
-                    shareData (
-                        context = context,
-                        message = context.getString(
-                            R.string.bagikan_ip,
-                            namaPengguna,
-                            selectedOptionText,
-                            programStudi,
-                            dataPenilaian,
-                            totalIp,
-                            jumlahSeluruhSks
-                        )
-                    )
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
-            ) {
-                Text(
-                    stringResource(R.string.b_kirim),
-                    color = Color.White
-                )
-            }
         }
     }
 }
 
 @Composable
-fun IconPickerIp(isError: Boolean){
-    if(isError){
+fun IconPickerIp(isError: Boolean) {
+    if (isError) {
         Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
     }
 }
@@ -459,34 +367,6 @@ fun IconPickerIp(isError: Boolean){
 fun ErrorHintIp(isError: Boolean) {
     if (isError) {
         Text(stringResource(R.string.input_invalid))
-    }
-}
-
-private fun shareData(context: Context, message: String){
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, message)
-    }
-    if (shareIntent.resolveActivity(context.packageManager) != null){
-        context.startActivity(shareIntent)
-    }
-}
-
-private fun hitungIP(sks: Float, indeks: String): Float{
-    val nam = kategoriIndeks(indeks)
-    return (sks * nam)
-}
-
-private fun kategoriIndeks(indeks: String):Float{
-    return when (indeks.uppercase()){
-        "A" -> 4.0f
-        "AB" -> 3.5f
-        "B" -> 3.0f
-        "BC" -> 2.5f
-        "C" -> 2.0f
-        "D" -> 1.0f
-        "E" -> 0f
-        else -> 0f
     }
 }
 

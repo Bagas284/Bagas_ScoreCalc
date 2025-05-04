@@ -32,16 +32,15 @@
     <string name="labelNilai">Score</string>
     <string name="labelBobot">Weight</string>
     <string name="labelPilihSemester">Semester</string>
-    <string name="b_hitung">Calculate</string>
+    <string name="b_simpan">Save</string>
     <string name="labelDataDiri">Personal Data</string>
     <string name="totalHitung">Average: %1$.2f</string>
 
     // GPA Screen
-    <string name="hitung_ip">Calculate Semester GPA</string>
+    <string name="tambah">Add Semester GPA</string>
+    <string name="edit">Edit Semester GPA</string>
     <string name="labelSKS">Credits</string>
     <string name="labelIndeks">Grade Index</string>
-    <string name="ipSemester">Semester GPA: %1$.2f</string>
-    <string name="sksTotal">%1$.0f Credits</string>
 
     // FAB
     <string name="buttonTambahKomponen">Add Component</string>

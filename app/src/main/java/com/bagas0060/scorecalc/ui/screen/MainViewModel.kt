@@ -52,4 +52,8 @@ class MainViewModel: ViewModel() {
             "A"
         )
     )
+
+    fun getNilaiIpSemester(id: Long): IpSemester? {
+        return data.find { it.id == id }
+    }
 }
