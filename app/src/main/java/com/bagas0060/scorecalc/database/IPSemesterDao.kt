@@ -18,4 +18,7 @@ interface IPSemesterDao {
 
     @Query("SELECT * FROM ipsemester ORDER BY semester ASC")
     fun getIpSemester(): Flow<List<IpSemester>> // dengan menggunakan flow, perubahan langsung dapat diketahui
+
+    @Query("SELECT * FROM ipsemester WHERE id = :id")
+    suspend fun getIpSemesterById(id: Long): IpSemester?
 }

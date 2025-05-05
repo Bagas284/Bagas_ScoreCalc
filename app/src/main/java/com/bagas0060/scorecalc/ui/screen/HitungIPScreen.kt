@@ -354,6 +354,8 @@ fun HitungIPContent(
 
                 if (id == null) {
                     viewModel.insert(userName, semester, studyProgram, subject, credit.toLong(), indeks)
+                } else {
+                    viewModel.update(id, userName, semester, studyProgram, subject, credit.toLong(), indeks)
                 }
                 navController.popBackStack()
             },

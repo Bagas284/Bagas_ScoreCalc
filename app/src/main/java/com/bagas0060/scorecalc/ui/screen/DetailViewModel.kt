@@ -24,8 +24,23 @@ class DetailViewModel(private val daoIp : IPSemesterDao) : ViewModel() {
             daoIp.insert(ipSemester)
         }
     }
-    fun getNilaiIpSemester(id: Long): IpSemester? {
-        return null
+    suspend fun getNilaiIpSemester(id: Long): IpSemester? {
+        return daoIp.getIpSemesterById(id)
     }
 
+    fun update(id: Long, namaPengguna: String, semester: String, prodi: String, mataKuliah: String, sks: Long, indeks: String){
+        val ipSemester =IpSemester(
+            id = id,
+            namaPengguna = namaPengguna,
+            semester = semester,
+            prodi = prodi,
+            mataKuliah = mataKuliah,
+            sks = sks,
+            indeks = indeks
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            daoIp.update(ipSemester)
+        }
+    }
 }
