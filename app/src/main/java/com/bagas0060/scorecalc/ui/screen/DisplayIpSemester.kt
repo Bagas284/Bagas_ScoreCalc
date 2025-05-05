@@ -135,7 +135,7 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier, navController: NavHo
                                 .padding(20.dp)
                         ) {
                             Text(
-                                text = "Semester $semester",
+                                text = semester,
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF333333)

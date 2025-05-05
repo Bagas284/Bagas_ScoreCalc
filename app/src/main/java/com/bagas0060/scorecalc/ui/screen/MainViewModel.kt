@@ -15,8 +15,4 @@ class MainViewModel(daoIp: IPSemesterDao): ViewModel() {
         started = SharingStarted.WhileSubscribed(),
         initialValue = emptyList()
     )
-
-    fun getNilaiIpSemester(id: Long): IpSemester? {
-        return data.value.find { it.id == id }
-    }
 }

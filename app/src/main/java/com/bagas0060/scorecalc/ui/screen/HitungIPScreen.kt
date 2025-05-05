@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +52,7 @@ import com.bagas0060.scorecalc.R
 import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
+import com.bagas0060.scorecalc.util.ViewModelFactory
 
 const val KEY_ID_IPSEMESTER = "ipSemester"
 
@@ -63,7 +65,9 @@ fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
     var sks by rememberSaveable { mutableStateOf("") }
     var indeks by rememberSaveable { mutableStateOf("") }
 
-    val viewModel: MainViewModel = viewModel()
+    val context = LocalContext.current
+    val factory = ViewModelFactory(context)
+    val viewModel: DetailViewModel = viewModel(factory = factory)
 
     LaunchedEffect(Unit) {
         if (id == null)return@LaunchedEffect
@@ -118,6 +122,7 @@ fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
         }
     ) { innerPadding ->
         HitungIPContent(
+            id = id,
             userName = namaPengguna,
             onUserNameChange = { namaPengguna = it},
             semester = selectedOptionText,
@@ -139,6 +144,7 @@ fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HitungIPContent(
+    id: Long?,
     modifier: Modifier = Modifier,
     userName: String, onUserNameChange: (String) -> Unit,
     semester: String, onSemesterChange: (String) -> Unit,
@@ -176,6 +182,10 @@ fun HitungIPContent(
 
     // Indeks
     var indeksError by rememberSaveable { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val factory = ViewModelFactory(context)
+    val viewModel: DetailViewModel = viewModel(factory = factory)
 
     Column(
         modifier = modifier
@@ -340,6 +350,10 @@ fun HitungIPContent(
 
                 if (namaPenggunaError || programStudiError || semesterError || mataKuliahError || sksError || indeksError){
                     return@Button
+                }
+
+                if (id == null) {
+                    viewModel.insert(userName, semester, studyProgram, subject, credit.toLong(), indeks)
                 }
                 navController.popBackStack()
             },
