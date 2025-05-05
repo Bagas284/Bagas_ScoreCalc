@@ -21,4 +21,7 @@ interface IPSemesterDao {
 
     @Query("SELECT * FROM ipsemester WHERE id = :id")
     suspend fun getIpSemesterById(id: Long): IpSemester?
+
+    @Query("DELETE FROM ipsemester WHERE mataKuliah = :mataKuliah")
+    suspend fun deleteByMataKuliah(mataKuliah: String)
 }

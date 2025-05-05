@@ -14,10 +14,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -33,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -68,6 +71,7 @@ fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
     val context = LocalContext.current
     val factory = ViewModelFactory(context)
     val viewModel: DetailViewModel = viewModel(factory = factory)
+    var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (id == null)return@LaunchedEffect
@@ -117,6 +121,12 @@ fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
                             tint = Color.White
                         )
                     }
+
+                    if (id != null) {
+                        DeleteAction {
+                            showDialog = true
+                        }
+                    }
                 }
             )
         }
@@ -138,6 +148,15 @@ fun HitungIPScreen(navController: NavHostController, id: Long? = null) {
             modifier = Modifier.padding(innerPadding),
             navController = navController
         )
+
+        if (id != null && showDialog){
+            DisplayAlertDialog(
+                onDismissRequest = { showDialog = false}) {
+                showDialog = false
+                viewModel.delete(mataKuliah)
+                navController.popBackStack()
+            }
+        }
     }
 }
 
@@ -367,6 +386,33 @@ fun HitungIPContent(
             Text(
                 stringResource(R.string.b_simpan),
                 color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun DeleteAction(delete: () -> Unit){
+    var expanded by remember { mutableStateOf(false) }
+
+    IconButton(onClick = { expanded = true}) {
+        Icon(
+            imageVector = Icons.Filled.MoreVert,
+            contentDescription = stringResource(R.string.lainnya),
+            tint = Color.White
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false}
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(text = stringResource(id = R.string.hapus))
+                },
+                onClick = {
+                    expanded = false
+                    delete()
+                }
             )
         }
     }

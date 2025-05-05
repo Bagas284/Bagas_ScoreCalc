@@ -2,7 +2,6 @@ package com.bagas0060.scorecalc.ui.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bagas0060.scorecalc.database.IPSemesterDao
 import com.bagas0060.scorecalc.model.IpSemester
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +40,12 @@ class DetailViewModel(private val daoIp : IPSemesterDao) : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             daoIp.update(ipSemester)
+        }
+    }
+
+    fun delete(mataKuliah: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            daoIp.deleteByMataKuliah(mataKuliah)
         }
     }
 }

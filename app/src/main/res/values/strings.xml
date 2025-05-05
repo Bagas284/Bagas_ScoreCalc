@@ -40,6 +40,8 @@
     <string name="edit">Edit IP Semester</string>
     <string name="labelSKS">SKS</string>
     <string name="labelIndeks">Indeks</string>
+    <string name="lainnya">Opsi Lainnya</string>
+    <string name="hapus">Hapus IP Semester</string>
 
     // FAB
     <string name="buttonTambahKomponen">Tambah Komponen</string>
@@ -59,4 +61,9 @@
     // Display Ip Semester
     <string name="list_kosong">Belum ada data</string>
     <string name="x_diklik">Nilai %1$s diklik!</string>
+
+    // Display Alert Dialog
+    <string name="pesan_hapus">Hapus nilai ini?</string>
+    <string name="tombol_hapus">Hapus</string>
+    <string name="tombol_batal">Batal</string>
 </resources>

@@ -41,6 +41,8 @@
     <string name="edit">Edit Semester GPA</string>
     <string name="labelSKS">Credits</string>
     <string name="labelIndeks">Grade Index</string>
+    <string name="lainnya">More Options</string>
+    <string name="hapus">Delete Semester GPA</string>
 
     // FAB
     <string name="buttonTambahKomponen">Add Component</string>
@@ -60,4 +62,9 @@
     // Display Ip Semester
     <string name="list_kosong">empty data</string>
     <string name="x_diklik">%1$s clicked!</string>
+
+    // Display Alert Dialog
+    <string name="pesan_hapus">Delete this value?</string>
+    <string name="tombol_hapus">Delete</string>
+    <string name="tombol_batal">Cancel</string>
 </resources>
