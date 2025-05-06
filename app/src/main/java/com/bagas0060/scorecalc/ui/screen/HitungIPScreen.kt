@@ -363,7 +363,7 @@ fun HitungIPContent(
                 programStudiError =
                     (studyProgram.isBlank() || !studyProgram.matches(Regex("^[a-zA-Z0-9\\s]+$")))
                 semesterError = (semester == "")
-                mataKuliahError = (subject.isBlank() || !subject.matches(Regex("^[a-zA-Z\\s]+$")))
+                mataKuliahError = (subject.isBlank() || !subject.matches(Regex("^[a-zA-Z0-9\\s]+$")))
                 sksError = (credit.isBlank() || !credit.matches(Regex("^[1-6]$")))
                 indeksError = (indeks.isBlank() || !indeks.matches(Regex("^[a-eA-E]{1,2}$")))
 

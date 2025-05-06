@@ -67,4 +67,8 @@
     <string name="pesan_hapus">Delete this value?</string>
     <string name="tombol_hapus">Delete</string>
     <string name="tombol_batal">Cancel</string>
+
+    // List grid
+    <string name="list">List view</string>
+    <string name="grid">Grid view</string>
 </resources>

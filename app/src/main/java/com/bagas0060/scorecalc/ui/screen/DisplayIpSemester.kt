@@ -1,6 +1,7 @@
 package com.bagas0060.scorecalc.ui.screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,10 +52,17 @@ import com.bagas0060.scorecalc.model.IpSemester
 import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
+import com.bagas0060.scorecalc.util.SettingsDataStore
 import com.bagas0060.scorecalc.util.ViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun DisplayIpSemester(navController: NavHostController) {
+    val dataStore = SettingsDataStore(LocalContext.current)
+    val showList by dataStore.layoutFlow.collectAsState(true)
+
     Scaffold(
         topBar = {
             MainTopAppBar(
@@ -70,6 +83,26 @@ fun DisplayIpSemester(navController: NavHostController) {
                         fontWeight = FontWeight.Bold
                     )
                 },
+
+                actions = {
+                    IconButton(onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.saveLayout(!showList)
+                        }
+                    }) {
+                        Icon(
+                            painter = painterResource(
+                                if (showList) R.drawable.baseline_grid_view_24
+                                else R.drawable.baseline_view_list_24
+                            ),
+                            contentDescription = stringResource(
+                                if (showList) R.string.grid
+                                else R.string.list
+                            ),
+                            tint = Color.White
+                        )
+                    }
+                }
             )
         },
         floatingActionButton = {
@@ -87,18 +120,20 @@ fun DisplayIpSemester(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        DisplayIpSemesterContent(Modifier.padding(innerPadding), navController)
+        DisplayIpSemesterContent(showList, Modifier.padding(innerPadding), navController)
     }
 }
 
 @Composable
-fun DisplayIpSemesterContent(modifier: Modifier = Modifier, navController: NavHostController) {
+fun DisplayIpSemesterContent(
+    showList: Boolean,
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     val context = LocalContext.current
     val factory = ViewModelFactory(context)
     val viewModel: MainViewModel = viewModel(factory = factory)
     val data by viewModel.data.collectAsState()
-
-    val groupedData = data.groupBy { Triple(it.namaPengguna, it.semester, it.prodi) }
 
     if (data.isEmpty()) {
         Column(
@@ -111,79 +146,131 @@ fun DisplayIpSemesterContent(modifier: Modifier = Modifier, navController: NavHo
             Text(stringResource(id = R.string.list_kosong))
         }
     } else {
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 84.dp)
-        ) {
-            groupedData.forEach { (key, ipList) ->
-                val (nama, semester, prodi) = key
+        val groupedData = data.groupBy { Triple(it.namaPengguna, it.semester, it.prodi) }
 
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFF0F0F0)
-                        ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Column(
+        if (showList) {
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 84.dp)
+            ) {
+                groupedData.forEach { (key, ipList) ->
+                    val (nama, semester, prodi) = key
+
+                    item {
+                        SemesterHeaderCard(
+                            semester = semester,
+                            nama = nama,
+                            prodi = prodi
+                        )
+                    }
+
+                    items(ipList) {
+                        ListItemIpSemester(ipSemester = it) {
+                            navController.navigate(Screen.FormIpSemesterUbah.withId(it.id))
+                        }
+                        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
+                    }
+
+                    item {
+                        HorizontalDivider(color = Color.LightGray, thickness = 6.dp)
+                    }
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 84.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                groupedData.forEach { (key, ipList) ->
+                    val (nama, semester, prodi) = key
+
+                    item {
+                        SemesterHeaderCard(
+                            semester = semester,
+                            nama = nama,
+                            prodi = prodi
+                        )
+                    }
+
+                    item {
+                        LazyVerticalStaggeredGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp)
+                                .height(((ipList.size / 2 + ipList.size % 2) * 120).dp), // Estimasi tinggi
+                            columns = StaggeredGridCells.Fixed(2),
+                            verticalItemSpacing = 8.dp,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp)
                         ) {
-                            Text(
-                                text = semester,
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF333333)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 12.dp),
-                                textAlign = TextAlign.Center
-                            )
-
-                            HorizontalDivider(
-                                thickness = 1.dp,
-                                color = Color.Gray.copy(alpha = 0.3f)
-                            )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            Text(
-                                text = "Nama: $nama",
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = Color.DarkGray
-                                )
-                            )
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Text(
-                                text = "Program Studi: $prodi",
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = Color.DarkGray
-                                )
-                            )
+                            items(ipList) {
+                                GridItemIpSemester(ipSemester = it) {
+                                    navController.navigate(Screen.FormIpSemesterUbah.withId(it.id))
+                                }
+                            }
                         }
                     }
 
-                }
-
-                items(ipList) {
-                    ListItemIpSemester(ipSemester = it) {
-                        navController.navigate(Screen.FormIpSemesterUbah.withId(it.id))
+                    item {
+                        HorizontalDivider(color = Color.LightGray, thickness = 6.dp)
                     }
-                    HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
-                }
-
-                item {
-                    HorizontalDivider(color = Color.LightGray, thickness = 6.dp)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SemesterHeaderCard(semester: String, nama: String, prodi: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFF0F0F0)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = semester,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF333333)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                textAlign = TextAlign.Center
+            )
+
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = Color.Gray.copy(alpha = 0.3f)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "Nama: $nama",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.DarkGray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Program Studi: $prodi",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.DarkGray
+                )
+            )
         }
     }
 }
@@ -197,9 +284,34 @@ fun ListItemIpSemester(ipSemester: IpSemester, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 7.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(text = "Mata Kuliah: ${ipSemester.mataKuliah}", fontWeight = FontWeight.Bold)
+        Text(text = ipSemester.mataKuliah, fontWeight = FontWeight.Bold)
         Text(text = "SKS: ${ipSemester.sks}")
         Text(text = "Indeks: ${ipSemester.indeks}")
+    }
+}
+
+@Composable
+fun GridItemIpSemester(ipSemester: IpSemester, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        border = BorderStroke(1.dp, DividerDefaults.color)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = ipSemester.mataKuliah,
+                fontWeight = FontWeight.Bold
+            )
+            Text(text = "SKS: ${ipSemester.sks}")
+            Text(text = "Indeks: ${ipSemester.indeks}")
+        }
     }
 }
 
