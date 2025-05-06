@@ -1,11 +1,14 @@
 package com.bagas0060.scorecalc.ui.screen
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
@@ -157,10 +161,16 @@ fun DisplayIpSemesterContent(
                     val (nama, semester, prodi) = key
 
                     item {
+                        val hitungIp = hitungIP(ipList)
+                        val hitungsks = hitungTotalSKS(ipList)
+
                         SemesterHeaderCard(
                             semester = semester,
                             nama = nama,
-                            prodi = prodi
+                            prodi = prodi,
+                            ip = hitungIp,
+                            totalsks = hitungsks,
+                            ipList = ipList
                         )
                     }
 
@@ -182,22 +192,28 @@ fun DisplayIpSemesterContent(
                 contentPadding = PaddingValues(bottom = 84.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+
                 groupedData.forEach { (key, ipList) ->
                     val (nama, semester, prodi) = key
 
                     item {
+                        val hitungIp = hitungIP(ipList)
+                        val hitungsks = hitungTotalSKS(ipList)
+
                         SemesterHeaderCard(
                             semester = semester,
                             nama = nama,
-                            prodi = prodi
-                        )
+                            prodi = prodi,
+                            ip = hitungIp,
+                            totalsks = hitungsks,
+                            ipList = ipList                        )
                     }
 
                     item {
                         LazyVerticalStaggeredGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(((ipList.size / 2 + ipList.size % 2) * 120).dp), // Estimasi tinggi
+                                .height(((ipList.size / 2 + ipList.size % 2) * 120).dp),
                             columns = StaggeredGridCells.Fixed(2),
                             verticalItemSpacing = 8.dp,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -221,7 +237,9 @@ fun DisplayIpSemesterContent(
 }
 
 @Composable
-fun SemesterHeaderCard(semester: String, nama: String, prodi: String) {
+fun SemesterHeaderCard(semester: String, nama: String, prodi: String, ip: Float, totalsks: Int, ipList: List<IpSemester>) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -271,8 +289,65 @@ fun SemesterHeaderCard(semester: String, nama: String, prodi: String) {
                     color = Color.DarkGray
                 )
             )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "IP Semester: %.2f".format(ip),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.DarkGray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Total SKS: $totalsks",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.DarkGray
+                )
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = {
+                    shareData(
+                        context = context,
+                        message = context.getString(
+                            R.string.bagikan_ip, nama, semester, prodi, ip, totalsks, formatKomponenPenilaian(ipList)
+                        )
+                    )
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = stringResource(R.string.b_kirim),
+                        tint = Color.Black
+                    )
+                }
+            }
         }
     }
+}
+
+fun shareData(context: Context, message: String) {
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, message)
+    }
+    if (shareIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(shareIntent)
+    }
+}
+
+fun formatKomponenPenilaian(ipList: List<IpSemester>): String {
+    val x = StringBuilder()
+
+    ipList.forEach { item ->
+        x.append("• ${item.mataKuliah}: ${item.sks} SKS, Indeks ${item.indeks}\n")
+    }
+    return x.toString()
 }
 
 @Composable
@@ -312,6 +387,42 @@ fun GridItemIpSemester(ipSemester: IpSemester, onClick: () -> Unit) {
             Text(text = "SKS: ${ipSemester.sks}")
             Text(text = "Indeks: ${ipSemester.indeks}")
         }
+    }
+}
+
+private fun hitungIP(ipList: List<IpSemester>): Float {
+    var totalBobot = 0f
+    var totalSks = 0L
+
+    for (item in ipList) {
+        val bobot = kategoriIndeks(item.indeks)
+        totalBobot += item.sks * bobot
+        totalSks += item.sks
+    }
+
+    return if (totalSks > 0) totalBobot / totalSks else 0f
+}
+
+private fun hitungTotalSKS(ipList: List<IpSemester>): Int {
+    var totalSks = 0
+
+    for (item in ipList) {
+        totalSks += item.sks.toInt()
+    }
+
+    return totalSks
+}
+
+private fun kategoriIndeks(indeks: String): Float {
+    return when (indeks.uppercase()) {
+        "A" -> 4.0f
+        "AB" -> 3.5f
+        "B" -> 3.0f
+        "BC" -> 2.5f
+        "C" -> 2.0f
+        "D" -> 1.0f
+        "E" -> 0f
+        else -> 0f
     }
 }
 

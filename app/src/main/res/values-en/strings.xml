@@ -57,7 +57,15 @@
     // Share
     <string name="b_kirim">Share</string>
     <string name="bagikan_template">Name: %1$s\nSemester: %2$s\nStudy Program: %3$s\nCourse: %4$s\n\nAssessment Components:\n%5$s\n\nAverage: %6$.2f\nGrade Index: %7$s</string>
-    <string name="bagikan_ip">Name: %1$s\nSemester: %2$s\nStudy Program: %3$s\n\nAssessment Components:\n%4$s\n\nSemester GPA: %5$.2f\nTotal Credits: %6$.0f Credits</string>
+    <string name="bagikan_ip">
+        Name: %1$s\n
+        Semester: %2$s\n
+        Study Program: %3$s\n
+        Semester GPA: %4$.2f\n
+        Total Credits: %5$d Credits\n\n
+        Assessment Components:\n
+        %6$s
+    </string>
 
     // Display Ip Semester
     <string name="list_kosong">empty data</string>

@@ -56,7 +56,15 @@
     // Share
     <string name="b_kirim">Bagikan</string>
     <string name="bagikan_template">Nama: %1$s\nSemester: %2$s\nProgram Studi: %3$s\nMata kuliah: %4$s\n\nKomponen penilaian:\n%5$s\n\nRata-rata: %6$.2f\nIndeks: %7$s</string>
-    <string name="bagikan_ip">Nama: %1$s\nSemester: %2$s\nProgram Studi: %3$s\n\nKomponen penilaian:\n%4$s\n\nIP Semester: %5$.2f\nTotal SKS: %6$.0f SKS</string>
+    <string name="bagikan_ip">
+        Nama: %1$s\n
+        Semester: %2$s\n
+        Program Studi: %3$s\n
+        IP Semester: %4$.2f\n
+        Total SKS: %5$d SKS\n\n
+        Komponen penilaian:\n
+        %6$s
+    </string>
     
     // Display Ip Semester
     <string name="list_kosong">Belum ada data</string>
