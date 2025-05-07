@@ -132,20 +132,6 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
                 .fillMaxWidth()
                 .padding(top = 15.dp)
         ) {
-//            ElevatedButton(
-//                onClick = { navController.navigate(Screen.Matkul.route) },
-//                modifier = Modifier
-//                    .height(50.dp)
-//                    .weight(1f)
-//                    .padding(end = 4.dp),
-//                shape = RoundedCornerShape(10.dp),
-//                colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
-//            ) {
-//                Text(
-//                    text = stringResource(R.string.b_nilaiPerMatkul),
-//                    color = Color.White
-//                )
-//            }
 
             ElevatedButton(
                 onClick = { navController.navigate((Screen.DisplayIpSemester.route))},
@@ -156,7 +142,7 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
             ) {
-                Text(text = stringResource(R.string.b_nilaiSeluruh), color = Color.White)
+                Text(text = stringResource(R.string.b_start), color = Color.White)
             }
         }
     }

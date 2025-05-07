@@ -76,7 +76,6 @@ fun AboutScreen(navController: NavHostController) {
 fun AboutContent(modifier: Modifier = Modifier) {
     val daftarPertanyaan = listOf(
         stringResource(R.string.pertanyaan1) to stringResource(R.string.jawaban1),
-        stringResource(R.string.pertanyaan2) to stringResource(R.string.jawaban2),
         stringResource(R.string.pertanyaan3) to stringResource(R.string.jawaban3),
     )
 

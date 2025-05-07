@@ -25,9 +25,6 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         composable(route = Screen.About.route) {
             AboutScreen(navController)
         }
-//        composable(route = Screen.Matkul.route){
-//            HitungMatkulScreen(navController)
-//        }
         composable (route = Screen.FormIpSemesterBaru.route){
             HitungIPScreen(navController)
         }

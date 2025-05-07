@@ -5,8 +5,7 @@
     <string name="deskripsiLogoHome">Calculator Image</string>
     <string name="judul">Welcome</string>
     <string name="isi">Find out how far you have come. Calculate your score now!</string>
-    <string name="b_nilaiPerMatkul">Calculate by Course</string>
-    <string name="b_nilaiSeluruh">Calculate GPA</string>
+    <string name="b_start">Start</string>
     <string name="menuOverflow">Overflow Menu</string>
     <string name="tanyaAplikasi">Ask About App</string>
     <string name="penilaian">Send Feedback</string>
@@ -15,11 +14,9 @@
     <string name="tentang_aplikasi">About the App</string>
     <string name="deskripsiLogoAbout">About App Image</string>
     <string name="pertanyaan1">What is ScoreCalc?</string>
-    <string name="jawaban1">ScoreCalc is an application used to calculate individual course scores and GPA (Grade Point Average).</string>
-    <string name="pertanyaan2">How to calculate a course score?</string>
-    <string name="jawaban2">You just need to enter the assessment components (such as assignments, midterms, finals, etc.) along with their respective scores and weights. The app will automatically calculate the final score and display the grade index.</string>
+    <string name="jawaban1">Score Calc is an application used to calculate Grade Point Average (GPA)</string>
     <string name="pertanyaan3">How to calculate GPA?</string>
-    <string name="jawaban3">You just need to input the course components and the number of credits (SKS) in one semester. The app will automatically calculate the final score and display the GPA.</string>
+    <string name="jawaban3">You only need to enter the course components along with the number of credits and index. The application will automatically calculate the Total Semester IP and calculate the number of credits taken.</string>
     <string name="b_kembali">Back</string>
     <string name="copyright">© 2025 Bagas Aldianata.</string>
 
