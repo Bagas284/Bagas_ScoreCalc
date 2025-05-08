@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,9 +47,16 @@ import com.bagas0060.scorecalc.R
 import com.bagas0060.scorecalc.navigation.Screen
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
+import com.bagas0060.scorecalc.util.SettingsDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(navController: NavHostController) {
+    val dataStore = SettingsDataStore(LocalContext.current)
+    val themeDisplay by dataStore.getTheme().collectAsState(initial = false)
+
     Scaffold(
         topBar = {
             var expanded by remember { mutableStateOf(false)}
@@ -59,6 +68,21 @@ fun MainScreen(navController: NavHostController) {
                     )
                 },
                 actions = {
+                    IconButton(onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.setTheme(!themeDisplay)
+                        }
+                    }){
+                        Icon(
+                            painter = painterResource(
+                                if (themeDisplay) R.drawable.baseline_light_mode_24
+                                else R.drawable.baseline_dark_mode_24
+                            ),
+                            contentDescription = null,
+                            tint = if (themeDisplay) Color.White else Color.Black
+                        )
+                    }
+
                     IconButton(onClick = {
                         expanded = true
                     }) {
