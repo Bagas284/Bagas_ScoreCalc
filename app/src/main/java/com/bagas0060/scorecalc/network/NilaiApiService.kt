@@ -32,3 +32,5 @@ object NilaiApi {
         return gambar
     }
 }
+
+enum class ApiStatus { LOADING, SUCCESS}

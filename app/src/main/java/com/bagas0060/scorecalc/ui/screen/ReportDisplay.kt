@@ -14,11 +14,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bagas0060.scorecalc.R
 import com.bagas0060.scorecalc.model.IpSemesterImage
+import com.bagas0060.scorecalc.network.ApiStatus
 import com.bagas0060.scorecalc.network.NilaiApi
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
@@ -75,12 +78,26 @@ fun ReportDisplay(navController: NavHostController) {
 fun ReportDisplayContent(modifier: Modifier = Modifier){
     val  viewModel: ApiViewModel = viewModel()
     val data by viewModel.data
+    val status by viewModel.status.collectAsState()
 
-    LazyVerticalGrid(
-        modifier = modifier.fillMaxSize().padding(4.dp),
-        columns = GridCells.Fixed(2)
-    ) {
-        items(data) { ListItem(ipsemesterimage = it) }
+    when (status) {
+        ApiStatus.LOADING -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                CircularProgressIndicator()
+            }
+        }
+
+        ApiStatus.SUCCESS -> {
+            LazyVerticalGrid(
+                modifier = modifier.fillMaxSize().padding(4.dp),
+                columns = GridCells.Fixed(2)
+            ) {
+                items(data) { ListItem(ipsemesterimage = it) }
+            }
+        }
     }
 }
 
