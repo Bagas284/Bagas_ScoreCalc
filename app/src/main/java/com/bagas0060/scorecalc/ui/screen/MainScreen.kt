@@ -156,17 +156,28 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
                 .fillMaxWidth()
                 .padding(top = 15.dp)
         ) {
-
             ElevatedButton(
                 onClick = { navController.navigate((Screen.DisplayIpSemester.route))},
                 modifier = Modifier
                     .height(50.dp)
-                    .weight(1f)
+                    .weight(2f)
                     .padding(start = 4.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
             ) {
                 Text(text = stringResource(R.string.b_start), color = Color.White)
+            }
+
+            ElevatedButton(
+                onClick = { navController.navigate((Screen.CertificationDisplay.route))},
+                modifier = Modifier
+                    .height(50.dp)
+                    .weight(2f)
+                    .padding(start = 4.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
+            ) {
+                Text(text = stringResource(R.string.b_gambar), color = Color.White)
             }
         }
     }

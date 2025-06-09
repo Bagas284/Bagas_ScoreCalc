@@ -5,7 +5,8 @@
     <string name="deskripsiLogoHome">Calculator Image</string>
     <string name="judul">Welcome</string>
     <string name="isi">Find out how far you have come. Calculate your score now!</string>
-    <string name="b_start">Start</string>
+    <string name="b_start">Calculate</string>
+    <string name="b_gambar">Certification</string>
     <string name="menuOverflow">Overflow Menu</string>
     <string name="tanyaAplikasi">Ask About App</string>
     <string name="penilaian">Send Feedback</string>

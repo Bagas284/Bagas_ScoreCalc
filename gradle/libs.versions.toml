@@ -12,7 +12,8 @@ composeBom = "2024.04.01"
 navCompose = "2.8.7"
 roomRuntime = "2.6.1"
 datastorePreferences = "1.1.4"
-
+retrofit = "2.10.0"
+moshiKotlin = "1.9.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +36,9 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomRuntime"}
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime"}
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences"}
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit"}
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshiKotlin"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

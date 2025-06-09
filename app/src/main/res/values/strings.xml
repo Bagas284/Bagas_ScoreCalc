@@ -4,7 +4,8 @@
     <string name="deskripsiLogoHome">Gambar Kalkulator</string>
     <string name="judul">Selamat Datang</string>
     <string name="isi">Temukan seberapa jauh pencapaian Anda. Hitung nilai Anda sekarang!</string>
-    <string name="b_start">Mulai</string>
+    <string name="b_start">Hitung</string>
+    <string name="b_gambar">Sertifikasi</string>
     <string name="menuOverflow">Menu Overflow</string>
     <string name="tanyaAplikasi">Tanya Aplikasi</string>
     <string name="penilaian">Kirim Masukkan</string>
