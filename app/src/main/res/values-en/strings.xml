@@ -6,7 +6,7 @@
     <string name="judul">Welcome</string>
     <string name="isi">Find out how far you have come. Calculate your score now!</string>
     <string name="b_start">Calculate</string>
-    <string name="b_gambar">Certification</string>
+    <string name="b_gambar">Report</string>
     <string name="menuOverflow">Overflow Menu</string>
     <string name="tanyaAplikasi">Ask About App</string>
     <string name="penilaian">Send Feedback</string>
@@ -77,4 +77,7 @@
     // List grid
     <string name="list">List view</string>
     <string name="grid">Grid view</string>
+
+    // CertificationDisplay
+    <string name="gambar">Image %1$s</string>
 </resources>

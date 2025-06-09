@@ -10,5 +10,5 @@ sealed class Screen (val route: String) {
     data object FormIpSemesterUbah: Screen("hitungIPScreen/{$KEY_ID_IPSEMESTER}") {
         fun withId(id: Long) = "hitungIPScreen/$id"
     }
-    data object CertificationDisplay: Screen("certificationDisplay")
+    data object ReportDisplay: Screen("reportDisplay")
 }

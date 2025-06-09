@@ -27,4 +27,8 @@ object NilaiApi {
     val service: NilaiApiService by lazy {
         retrofit.create(NilaiApiService::class.java)
     }
+
+    fun getIpSemesterImageUrl(gambar: String): String{
+        return gambar
+    }
 }
