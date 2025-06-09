@@ -88,7 +88,7 @@ fun ReportDisplayContent(modifier: Modifier = Modifier){
 fun ListItem(ipsemesterimage: IpSemesterImage){
     Box(
         modifier = Modifier.padding(4.dp)
-            .size(width = 200.dp, height = 300.dp)
+            .size(width = 200.dp, height = 250.dp)
             .border(1.dp, Color.Black),
         contentAlignment = Alignment.BottomCenter
     ){
@@ -100,6 +100,7 @@ fun ListItem(ipsemesterimage: IpSemesterImage){
             contentDescription = stringResource(R.string.gambar, ipsemesterimage.gambar),
             contentScale = ContentScale.Crop,
             placeholder = painterResource(R.drawable.loading_img),
+            error = painterResource(id = R.drawable.baseline_broken_image_24),
             modifier = Modifier.fillMaxSize()
         )
 
