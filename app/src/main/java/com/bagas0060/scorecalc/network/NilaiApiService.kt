@@ -29,7 +29,7 @@ object NilaiApi {
     }
 
     fun getIpSemesterImageUrl(gambar: String): String{
-        return gambar
+        return "${BASE_URL}image?id=$gambar"
     }
 }
 
