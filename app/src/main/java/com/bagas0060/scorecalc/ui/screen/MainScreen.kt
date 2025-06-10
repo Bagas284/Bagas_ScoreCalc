@@ -52,7 +52,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bagas0060.scorecalc.BuildConfig
 import com.bagas0060.scorecalc.R
+import com.bagas0060.scorecalc.model.User
 import com.bagas0060.scorecalc.navigation.Screen
+import com.bagas0060.scorecalc.network.UserDataStore
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 import com.bagas0060.scorecalc.util.SettingsDataStore
@@ -62,7 +64,6 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.sign
 
 @Composable
 fun MainScreen(navController: NavHostController) {
@@ -140,6 +141,8 @@ fun MainScreen(navController: NavHostController) {
 @Composable
 fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostController) {
     val context = LocalContext.current
+    val dataStore = UserDataStore(context)
+    val user by dataStore.userFlow.collectAsState(User())
 
     Column(
         modifier = modifier
@@ -166,64 +169,56 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 15.dp)
-        ) {
+        if (user.email.isEmpty()){
+            // Login
             ElevatedButton(
-                onClick = { navController.navigate((Screen.DisplayIpSemester.route))},
+                onClick = {
+                    CoroutineScope(Dispatchers.IO).launch { signIn(context, dataStore) }
+                },
                 modifier = Modifier
-                    .height(50.dp)
-                    .weight(2f)
-                    .padding(start = 4.dp),
+                    .padding(start = 4.dp)
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
             ) {
-                Text(text = stringResource(R.string.b_start), color = Color.White)
-            }
-
-            ElevatedButton(
-                onClick = { navController.navigate((Screen.ReportDisplay.route))},
-                modifier = Modifier
-                    .height(50.dp)
-                    .weight(2f)
-                    .padding(start = 4.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
-            ) {
-                Text(text = stringResource(R.string.b_gambar), color = Color.White)
-            }
-            ElevatedButton(
-                onClick = { navController.navigate((Screen.ReportDisplay.route))},
-                modifier = Modifier
-                    .height(50.dp)
-                    .weight(2f)
-                    .padding(start = 4.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
-            ) {
-                Text(text = stringResource(R.string.b_gambar), color = Color.White)
+                Text(text = stringResource(R.string.login), color = Color.White)
             }
         }
+        else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp)
+            ) {
+                ElevatedButton(
+                    onClick = { navController.navigate((Screen.DisplayIpSemester.route)) },
+                    modifier = Modifier
+                        .height(50.dp)
+                        .weight(2f)
+                        .padding(start = 4.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
+                ) {
+                    Text(text = stringResource(R.string.b_start), color = Color.White)
+                }
 
-        // Login
-        ElevatedButton(
-            onClick = {
-                CoroutineScope(Dispatchers.IO).launch { signIn(context) }
-            },
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
-        ) {
-            Text(text = stringResource(R.string.b_gambar), color = Color.White)
+                ElevatedButton(
+                    onClick = { navController.navigate((Screen.ReportDisplay.route)) },
+                    modifier = Modifier
+                        .height(50.dp)
+                        .weight(2f)
+                        .padding(start = 4.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
+                ) {
+                    Text(text = stringResource(R.string.b_gambar), color = Color.White)
+                }
+            }
         }
     }
 }
 
-private suspend fun signIn(context: Context){
+private suspend fun signIn(context: Context, dataStore: UserDataStore){
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setServerClientId(BuildConfig.API_KEY)
@@ -236,19 +231,25 @@ private suspend fun signIn(context: Context){
     try {
         val credentialManager = CredentialManager.create(context)
         val result = credentialManager.getCredential(context, request)
-        handleSignIn(result)
+        handleSignIn(result, dataStore)
     } catch (e: GetCredentialException){
         Log.e("SIGN-IN", "Error: ${e.errorMessage}")
     }
 }
 
-private fun handleSignIn(result: GetCredentialResponse){
+private suspend fun handleSignIn(
+    result: GetCredentialResponse,
+    dataStore: UserDataStore
+){
     val credential = result.credential
     if (credential is CustomCredential &&
         credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL){
         try {
             val googleId = GoogleIdTokenCredential.createFrom(credential.data)
-            Log.d("SIGN-IN", "User email: ${googleId.id}")
+            val nama = googleId.displayName ?: ""
+            val email = googleId.id
+            val photoUrl = googleId.profilePictureUri.toString()
+            dataStore.saveData(User(nama, email, photoUrl))
         }catch (e: GoogleIdTokenParsingException){
             Log.e("SIGN-IN", "Error: ${e.message}")
         }
