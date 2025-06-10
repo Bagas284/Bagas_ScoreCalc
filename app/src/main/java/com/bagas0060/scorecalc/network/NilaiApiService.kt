@@ -27,15 +27,17 @@ private val retrofit = Retrofit.Builder()
 
 interface NilaiApiService {
     @GET("scores")
-    suspend fun getNilai(): List<IpSemesterImage>
+    suspend fun getNilai(
+        @Header("Authorization") email: String
+    ): List<IpSemesterImage>
 
     @Multipart
     @POST("scores")
     suspend fun tambahNilai(
-        @Header("Authorization") userId: String,
+        @Header("Authorization") email: String,
         @Part("semester") semester: RequestBody,
         @Part("mataKuliah") mataKuliah: RequestBody,
-        @Part image: MultipartBody.Part
+        @Part gambar: MultipartBody.Part
     ): OpStatus
 }
 

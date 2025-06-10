@@ -35,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -130,7 +131,7 @@ fun ReportDisplay(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        ReportDisplayContent(viewModel, Modifier.padding(innerPadding))
+        ReportDisplayContent(viewModel, user.email, Modifier.padding(innerPadding))
 
         if (showRaporDialog){
             RaporDialog(
@@ -149,10 +150,13 @@ fun ReportDisplay(navController: NavHostController) {
 }
 
 @Composable
-fun ReportDisplayContent(viewModel: ApiViewModel, modifier: Modifier = Modifier){
+fun ReportDisplayContent(viewModel: ApiViewModel, email: String, modifier: Modifier = Modifier){
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
 
+    LaunchedEffect(email) {
+        viewModel.retrieveData(email)
+    }
     when (status) {
         ApiStatus.LOADING -> {
             Box(
@@ -182,7 +186,7 @@ fun ReportDisplayContent(viewModel: ApiViewModel, modifier: Modifier = Modifier)
                 Text(text = stringResource(id = R.string.error))
 
                 Button(
-                    onClick = { viewModel.retrieveData() },
+                    onClick = { viewModel.retrieveData(email) },
                     modifier = Modifier.padding(top = 16.dp),
                     contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
                     shape = RoundedCornerShape(10.dp),

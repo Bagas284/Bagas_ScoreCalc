@@ -27,15 +27,11 @@ class ApiViewModel: ViewModel() {
     var errorMessage = mutableStateOf<String?>(null)
         private set
 
-    init {
-        retrieveData()
-    }
-
-    fun retrieveData(){
+    fun retrieveData(email: String){
         viewModelScope.launch(Dispatchers.IO) {
             status.value = ApiStatus.LOADING
             try {
-                data.value = NilaiApi.service.getNilai()
+                data.value = NilaiApi.service.getNilai(email)
                 status.value = ApiStatus.SUCCESS
             } catch (e: Exception) {
                 Log.d("ApiViewModel", "Failure: ${e.message}")
@@ -44,17 +40,17 @@ class ApiViewModel: ViewModel() {
         }
     }
 
-    fun saveData(userId: String, semester: String, mataKuliah: String, bitmap: Bitmap){
+    fun saveData(email: String, semester: String, mataKuliah: String, bitmap: Bitmap){
         viewModelScope.launch(Dispatchers.IO){
             try {
                 val result = NilaiApi.service.tambahNilai(
-                    userId,
+                    email,
                     semester.toRequestBody("text/plain".toMediaTypeOrNull()),
                     mataKuliah.toRequestBody("text/plain".toMediaTypeOrNull()),
                     bitmap.toMultipartBody()
                 )
                 if (result.status == "success")
-                    retrieveData()
+                    retrieveData(email)
                 else
                     throw Exception(result.message)
             } catch (e: Exception) {
@@ -71,7 +67,7 @@ class ApiViewModel: ViewModel() {
         val requestBody = byteArray.toRequestBody(
             "image/jpg".toMediaTypeOrNull(), 0, byteArray.size)
         return MultipartBody.Part.createFormData(
-            "image", "image.jpg", requestBody)
+            "gambar", "image.jpg", requestBody)
     }
 
     fun clearMessage() { errorMessage.value = null}
