@@ -62,6 +62,10 @@ fun MainScreen(navController: NavHostController) {
     val dataStore = SettingsDataStore(LocalContext.current)
     val themeDisplay by dataStore.getTheme().collectAsState(initial = false)
 
+    val context = LocalContext.current
+    val userDataStore = UserDataStore(context)
+    val user by userDataStore.userFlow.collectAsState(User())
+
     Scaffold(
         topBar = {
             MainTopAppBar(
@@ -76,7 +80,7 @@ fun MainScreen(navController: NavHostController) {
                         CoroutineScope(Dispatchers.IO).launch {
                             dataStore.setTheme(!themeDisplay)
                         }
-                    }){
+                    }) {
                         Icon(
                             painter = painterResource(
                                 if (themeDisplay) R.drawable.baseline_light_mode_24
@@ -88,15 +92,18 @@ fun MainScreen(navController: NavHostController) {
                     }
 
                     IconButton(onClick = {
-                        navController.navigate(Screen.ProfileScreen.route)
-                    }){
+                        if (user.email.isNotEmpty()) {
+                            navController.navigate(Screen.ProfileScreen.route)
+                        }
+                    }) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_account_circle_24),
                             contentDescription = stringResource(R.string.profile),
                             tint = Color.White
                         )
                     }
-                },
+
+                }
             )
         }
     ) { innerPadding ->
@@ -135,22 +142,22 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
         )
 
-        if (user.email.isEmpty()){
+        if (user.email.isEmpty()) {
             // Login
             ElevatedButton(
                 onClick = {
                     CoroutineScope(Dispatchers.IO).launch { signIn(context, dataStore) }
                 },
                 modifier = Modifier
-                    .padding(start = 4.dp)
+                    .padding(start = 4.dp, top = 15.dp)
+                    .height(50.dp)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.red))
             ) {
                 Text(text = stringResource(R.string.login), color = Color.White)
             }
-        }
-        else {
+        } else {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -184,7 +191,7 @@ fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostControlle
     }
 }
 
-private suspend fun signIn(context: Context, dataStore: UserDataStore){
+private suspend fun signIn(context: Context, dataStore: UserDataStore) {
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setServerClientId(BuildConfig.API_KEY)
@@ -198,7 +205,7 @@ private suspend fun signIn(context: Context, dataStore: UserDataStore){
         val credentialManager = CredentialManager.create(context)
         val result = credentialManager.getCredential(context, request)
         handleSignIn(result, dataStore)
-    } catch (e: GetCredentialException){
+    } catch (e: GetCredentialException) {
         Log.e("SIGN-IN", "Error: ${e.errorMessage}")
     }
 }
@@ -206,21 +213,21 @@ private suspend fun signIn(context: Context, dataStore: UserDataStore){
 private suspend fun handleSignIn(
     result: GetCredentialResponse,
     dataStore: UserDataStore
-){
+) {
     val credential = result.credential
     if (credential is CustomCredential &&
-        credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL){
+        credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+    ) {
         try {
             val googleId = GoogleIdTokenCredential.createFrom(credential.data)
             val nama = googleId.displayName ?: ""
             val email = googleId.id
             val photoUrl = googleId.profilePictureUri.toString()
             dataStore.saveData(User(nama, email, photoUrl))
-        }catch (e: GoogleIdTokenParsingException){
+        } catch (e: GoogleIdTokenParsingException) {
             Log.e("SIGN-IN", "Error: ${e.message}")
         }
-    }
-    else{
+    } else {
         Log.e("SIGN-IN", "Error: unrecognized custom credential type.")
     }
 }

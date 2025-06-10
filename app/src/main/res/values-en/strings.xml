@@ -86,4 +86,5 @@
 
     //ProfileScreen
     <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
 </resources>

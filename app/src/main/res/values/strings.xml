@@ -85,4 +85,5 @@
     
     //ProfileScreen
     <string name="profile">Profile</string>
+    <string name="logout">Keluar</string>
 </resources>
