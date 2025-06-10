@@ -79,10 +79,11 @@
     <string name="list">List view</string>
     <string name="grid">Grid view</string>
 
-    // CertificationDisplay
+    // RaporDisplay
     <string name="gambar">Image %1$s</string>
     <string name="error">Failed to load data.. Connection error.</string>
     <string name="try_again">Try Again</string>
+    <string name="tambah_rapor">Add Report</string>
 
     //ProfileScreen
     <string name="profile">Profile</string>

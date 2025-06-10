@@ -78,10 +78,11 @@
     <string name="list">Tampilan list</string>
     <string name="grid">Tampilan grid</string>
 
-    // CertificationDisplay
+    // RaporDisplay
     <string name="gambar">Gambar %1$s</string>
     <string name="error">Gagal memuat data.. Koneksi error.</string>
     <string name="try_again">Coba lagi</string>
+    <string name="tambah_rapor">Tambah Rapor</string>
     
     //ProfileScreen
     <string name="profile">Profile</string>

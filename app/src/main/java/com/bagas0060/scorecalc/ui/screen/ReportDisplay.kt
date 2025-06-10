@@ -1,6 +1,13 @@
 package com.bagas0060.scorecalc.ui.screen
 
+import android.content.ContentResolver
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +24,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -27,6 +36,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,9 +62,19 @@ import com.bagas0060.scorecalc.network.ApiStatus
 import com.bagas0060.scorecalc.network.NilaiApi
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 
 @Composable
 fun ReportDisplay(navController: NavHostController) {
+    val context = LocalContext.current
+    var bitmap: Bitmap? by remember { mutableStateOf(null) }
+    val launcher = rememberLauncherForActivityResult(CropImageContract()) {
+        bitmap = getCroppedImage(context.contentResolver, it)
+    }
+
     Scaffold(
         topBar = {
             MainTopAppBar(
@@ -74,6 +96,26 @@ fun ReportDisplay(navController: NavHostController) {
                     )
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                val options = CropImageContractOptions(
+                    null, CropImageOptions(
+                        imageSourceIncludeGallery = false,
+                        imageSourceIncludeCamera = true,
+                        fixAspectRatio = true
+                    )
+                )
+                launcher.launch(options)
+            },
+                containerColor = colorResource(R.color.red)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.tambah_rapor),
+                    tint = Color.White
+                )
+            }
         }
     ) { innerPadding ->
         ReportDisplayContent(Modifier.padding(innerPadding))
@@ -82,7 +124,7 @@ fun ReportDisplay(navController: NavHostController) {
 
 @Composable
 fun ReportDisplayContent(modifier: Modifier = Modifier){
-    val  viewModel: ApiViewModel = viewModel()
+    val viewModel: ApiViewModel = viewModel()
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
 
@@ -99,7 +141,8 @@ fun ReportDisplayContent(modifier: Modifier = Modifier){
         ApiStatus.SUCCESS -> {
             LazyVerticalGrid(
                 modifier = modifier.fillMaxSize().padding(4.dp),
-                columns = GridCells.Fixed(2)
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(bottom = 80.dp)
             ) {
                 items(data) { ListItem(ipsemesterimage = it) }
             }
@@ -165,6 +208,24 @@ fun ListItem(ipsemesterimage: IpSemesterImage){
                 color = Color.White
             )
         }
+    }
+}
+
+private fun getCroppedImage(
+    resolver: ContentResolver,
+    result: CropImageView.CropResult
+): Bitmap? {
+    if (!result.isSuccessful) {
+        Log.e("IMAGE", "Error: ${result.error}")
+        return null
+    }
+    val uri = result.uriContent ?: return null
+
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        MediaStore.Images.Media.getBitmap(resolver, uri)
+    } else {
+        val source = ImageDecoder.createSource(resolver, uri)
+        ImageDecoder.decodeBitmap(source)
     }
 }
 
