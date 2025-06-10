@@ -25,7 +25,7 @@
     // Calculate Per Course Screen
     <string name="hitung_matkul">Calculate Score per Course</string>
     <string name="labelNamaPengguna">User Name</string>
-    <string name="labelMataKuliah">Course Name</string>
+    <string name="labelMataKuliah">Course</string>
     <string name="labelProgramStudi">Study Program</string>
     <string name="labelKomponenPenilaian">Assessment Component</string>
     <string name="labelNilai">Score</string>

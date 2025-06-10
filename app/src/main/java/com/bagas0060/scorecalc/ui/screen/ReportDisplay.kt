@@ -70,9 +70,12 @@ import com.canhub.cropper.CropImageView
 @Composable
 fun ReportDisplay(navController: NavHostController) {
     val context = LocalContext.current
+    var showRaporDialog by remember { mutableStateOf(false) }
+
     var bitmap: Bitmap? by remember { mutableStateOf(null) }
     val launcher = rememberLauncherForActivityResult(CropImageContract()) {
         bitmap = getCroppedImage(context.contentResolver, it)
+        if (bitmap != null) showRaporDialog = true
     }
 
     Scaffold(
@@ -119,6 +122,15 @@ fun ReportDisplay(navController: NavHostController) {
         }
     ) { innerPadding ->
         ReportDisplayContent(Modifier.padding(innerPadding))
+
+        if (showRaporDialog){
+            RaporDialog(
+                bitmap = bitmap,
+                onDismissRequest = { showRaporDialog = false }) { semester, mataKuliah ->
+                Log.d("TAMBAH", "$semester $mataKuliah ditambahkan.")
+                showRaporDialog = false
+            }
+        }
     }
 }
 
