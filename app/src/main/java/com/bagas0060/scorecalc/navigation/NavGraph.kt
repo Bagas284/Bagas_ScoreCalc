@@ -7,11 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.bagas0060.scorecalc.model.User
 import com.bagas0060.scorecalc.ui.screen.AboutScreen
 import com.bagas0060.scorecalc.ui.screen.DisplayIpSemester
 import com.bagas0060.scorecalc.ui.screen.HitungIPScreen
 import com.bagas0060.scorecalc.ui.screen.KEY_ID_IPSEMESTER
 import com.bagas0060.scorecalc.ui.screen.MainScreen
+import com.bagas0060.scorecalc.ui.screen.ProfileScreen
 import com.bagas0060.scorecalc.ui.screen.ReportDisplay
 
 @Composable
@@ -43,6 +45,9 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         }
         composable(route = Screen.ReportDisplay.route) {
             ReportDisplay(navController)
+        }
+        composable(route = Screen.ProfileScreen.route) {
+            ProfileScreen(navController)
         }
     }
 }

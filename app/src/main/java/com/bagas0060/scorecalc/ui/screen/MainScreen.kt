@@ -13,13 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,7 +64,6 @@ fun MainScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            var expanded by remember { mutableStateOf(false)}
             MainTopAppBar(
                 title = {
                     Text(
@@ -97,40 +88,15 @@ fun MainScreen(navController: NavHostController) {
                     }
 
                     IconButton(onClick = {
-                        expanded = true
-                    }) {
+                        navController.navigate(Screen.ProfileScreen.route)
+                    }){
                         Icon(
-                            imageVector = Icons.Outlined.MoreVert,
-                            contentDescription = stringResource(R.string.menuOverflow),
+                            painter = painterResource(R.drawable.baseline_account_circle_24),
+                            contentDescription = stringResource(R.string.profile),
                             tint = Color.White
                         )
                     }
-
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false}
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.tentang_aplikasi))},
-                            onClick = {
-                                navController.navigate(Screen.About.route)
-                            }
-                        )
-                        HorizontalDivider()
-
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.tanyaAplikasi))},
-                            onClick = {}
-                        )
-
-                        HorizontalDivider()
-
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.penilaian))},
-                            onClick = {}
-                        )
-                    }
-                }
+                },
             )
         }
     ) { innerPadding ->

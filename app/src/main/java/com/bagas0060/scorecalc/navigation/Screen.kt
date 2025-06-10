@@ -11,4 +11,5 @@ sealed class Screen (val route: String) {
         fun withId(id: Long) = "hitungIPScreen/$id"
     }
     data object ReportDisplay: Screen("reportDisplay")
+    data object ProfileScreen: Screen("profileScreen")
 }
