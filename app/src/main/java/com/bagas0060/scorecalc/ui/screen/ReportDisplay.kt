@@ -7,6 +7,7 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,8 +59,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bagas0060.scorecalc.R
 import com.bagas0060.scorecalc.model.IpSemesterImage
+import com.bagas0060.scorecalc.model.User
 import com.bagas0060.scorecalc.network.ApiStatus
 import com.bagas0060.scorecalc.network.NilaiApi
+import com.bagas0060.scorecalc.network.UserDataStore
 import com.bagas0060.scorecalc.ui.components.MainTopAppBar
 import com.bagas0060.scorecalc.ui.theme.ScoreCalcTheme
 import com.canhub.cropper.CropImageContract
@@ -71,6 +74,12 @@ import com.canhub.cropper.CropImageView
 fun ReportDisplay(navController: NavHostController) {
     val context = LocalContext.current
     var showRaporDialog by remember { mutableStateOf(false) }
+
+    val viewModel: ApiViewModel = viewModel()
+    val errorMessage by viewModel.errorMessage
+
+    val dataStore = UserDataStore(context)
+    val user by dataStore.userFlow.collectAsState(User())
 
     var bitmap: Bitmap? by remember { mutableStateOf(null) }
     val launcher = rememberLauncherForActivityResult(CropImageContract()) {
@@ -121,22 +130,26 @@ fun ReportDisplay(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        ReportDisplayContent(Modifier.padding(innerPadding))
+        ReportDisplayContent(viewModel, Modifier.padding(innerPadding))
 
         if (showRaporDialog){
             RaporDialog(
                 bitmap = bitmap,
                 onDismissRequest = { showRaporDialog = false }) { semester, mataKuliah ->
-                Log.d("TAMBAH", "$semester $mataKuliah ditambahkan.")
+                viewModel.saveData(user.email, semester, mataKuliah, bitmap!!)
                 showRaporDialog = false
             }
+        }
+
+        if (errorMessage != null){
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            viewModel.clearMessage()
         }
     }
 }
 
 @Composable
-fun ReportDisplayContent(modifier: Modifier = Modifier){
-    val viewModel: ApiViewModel = viewModel()
+fun ReportDisplayContent(viewModel: ApiViewModel, modifier: Modifier = Modifier){
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
 

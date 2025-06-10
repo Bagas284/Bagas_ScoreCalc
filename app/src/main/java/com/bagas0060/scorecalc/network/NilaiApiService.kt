@@ -1,11 +1,18 @@
 package com.bagas0060.scorecalc.network
 
 import com.bagas0060.scorecalc.model.IpSemesterImage
+import com.bagas0060.scorecalc.model.OpStatus
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
 
 private const val BASE_URL = "https://score-api.bagasaldianata.my.id/api/"
 
@@ -21,6 +28,15 @@ private val retrofit = Retrofit.Builder()
 interface NilaiApiService {
     @GET("scores")
     suspend fun getNilai(): List<IpSemesterImage>
+
+    @Multipart
+    @POST("scores")
+    suspend fun tambahNilai(
+        @Header("Authorization") userId: String,
+        @Part("semester") semester: RequestBody,
+        @Part("mataKuliah") mataKuliah: RequestBody,
+        @Part image: MultipartBody.Part
+    ): OpStatus
 }
 
 object NilaiApi {
