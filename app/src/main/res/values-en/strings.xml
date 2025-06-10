@@ -10,6 +10,7 @@
     <string name="menuOverflow">Overflow Menu</string>
     <string name="tanyaAplikasi">Ask About App</string>
     <string name="penilaian">Send Feedback</string>
+    <string name="login">Login</string>
 
     // About Screen
     <string name="tentang_aplikasi">About the App</string>

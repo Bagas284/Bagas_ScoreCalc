@@ -9,6 +9,7 @@
     <string name="menuOverflow">Menu Overflow</string>
     <string name="tanyaAplikasi">Tanya Aplikasi</string>
     <string name="penilaian">Kirim Masukkan</string>
+    <string name="login">Masuk</string>
 
     // About Screen
     <string name="tentang_aplikasi">Tentang Aplikasi</string>
