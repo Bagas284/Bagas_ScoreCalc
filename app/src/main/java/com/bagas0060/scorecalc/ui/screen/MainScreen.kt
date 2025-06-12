@@ -62,8 +62,7 @@ fun MainScreen(navController: NavHostController) {
     val dataStore = SettingsDataStore(LocalContext.current)
     val themeDisplay by dataStore.getTheme().collectAsState(initial = false)
 
-    val context = LocalContext.current
-    val userDataStore = UserDataStore(context)
+    val userDataStore = UserDataStore(LocalContext.current)
     val user by userDataStore.userFlow.collectAsState(User())
 
     Scaffold(

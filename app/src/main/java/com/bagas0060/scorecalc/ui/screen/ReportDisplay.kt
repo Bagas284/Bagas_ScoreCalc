@@ -10,24 +10,27 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -82,6 +85,9 @@ fun ReportDisplay(navController: NavHostController) {
     val dataStore = UserDataStore(context)
     val user by dataStore.userFlow.collectAsState(User())
 
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedHewanId by remember { mutableStateOf("") }
+
     var bitmap: Bitmap? by remember { mutableStateOf(null) }
     val launcher = rememberLauncherForActivityResult(CropImageContract()) {
         bitmap = getCroppedImage(context.contentResolver, it)
@@ -111,16 +117,17 @@ fun ReportDisplay(navController: NavHostController) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                val options = CropImageContractOptions(
-                    null, CropImageOptions(
-                        imageSourceIncludeGallery = false,
-                        imageSourceIncludeCamera = true,
-                        fixAspectRatio = true
+            FloatingActionButton(
+                onClick = {
+                    val options = CropImageContractOptions(
+                        null, CropImageOptions(
+                            imageSourceIncludeGallery = false,
+                            imageSourceIncludeCamera = true,
+                            fixAspectRatio = true
+                        )
                     )
-                )
-                launcher.launch(options)
-            },
+                    launcher.launch(options)
+                },
                 containerColor = colorResource(R.color.red)
             ) {
                 Icon(
@@ -131,9 +138,17 @@ fun ReportDisplay(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        ReportDisplayContent(viewModel, user.email, Modifier.padding(innerPadding))
+        ReportDisplayContent(
+            viewModel,
+            user.email,
+            Modifier.padding(innerPadding),
+            onDelete = { id ->
+                selectedHewanId = id
+                showDeleteDialog = true
+            }
+        )
 
-        if (showRaporDialog){
+        if (showRaporDialog) {
             RaporDialog(
                 bitmap = bitmap,
                 onDismissRequest = { showRaporDialog = false }) { semester, mataKuliah ->
@@ -142,47 +157,78 @@ fun ReportDisplay(navController: NavHostController) {
             }
         }
 
-        if (errorMessage != null){
+        if (errorMessage != null) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             viewModel.clearMessage()
+        }
+
+        if (showDeleteDialog) {
+            DialogHapus(
+                onDismissRequest = { showDeleteDialog = false },
+                onConfirmation = {
+                    viewModel.deleteData(user.email, selectedHewanId)
+                    showDeleteDialog = false
+                }
+            )
         }
     }
 }
 
 @Composable
-fun ReportDisplayContent(viewModel: ApiViewModel, email: String, modifier: Modifier = Modifier){
+fun ReportDisplayContent(
+    viewModel: ApiViewModel,
+    email: String,
+    modifier: Modifier = Modifier,
+    onDelete: (String) -> Unit
+) {
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
 
-    LaunchedEffect(email) {
-        viewModel.retrieveData(email)
+    val context = LocalContext.current
+    val dataStore = UserDataStore(context)
+    val user by dataStore.userFlow.collectAsState(User())
+    val isUserReady = user.email.isNotEmpty()
+
+    LaunchedEffect(isUserReady) {
+        if (isUserReady) {
+            viewModel.retrieveData(user.email)
+        }
     }
     when (status) {
         ApiStatus.LOADING -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 CircularProgressIndicator()
             }
         }
 
         ApiStatus.SUCCESS -> {
             LazyVerticalGrid(
-                modifier = modifier.fillMaxSize().padding(4.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(4.dp),
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                items(data) { ListItem(ipsemesterimage = it) }
+                items(data.size) { index ->
+                    val nilai = data[index]
+                    ListItem(
+                        ipsemesterimage = nilai,
+                        onDeleteClick = onDelete,
+                        showDeleteButton = (nilai.mine == 1)
+                    )
+                }
             }
         }
 
         ApiStatus.FAILED -> {
-            Column (
+            Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 Text(text = stringResource(id = R.string.error))
 
                 Button(
@@ -200,42 +246,85 @@ fun ReportDisplayContent(viewModel: ApiViewModel, email: String, modifier: Modif
 }
 
 @Composable
-fun ListItem(ipsemesterimage: IpSemesterImage){
-    Box(
-        modifier = Modifier.padding(4.dp)
-            .size(width = 200.dp, height = 250.dp)
-            .border(1.dp, Color.Black),
-        contentAlignment = Alignment.BottomCenter
-    ){
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(NilaiApi.getIpSemesterImageUrl(ipsemesterimage.gambar))
-                .crossfade(true)
-                .build(),
-            contentDescription = stringResource(R.string.gambar, ipsemesterimage.gambar),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.loading_img),
-            error = painterResource(id = R.drawable.baseline_broken_image_24),
-            modifier = Modifier.fillMaxSize()
-        )
+fun ListItem(
+    ipsemesterimage: IpSemesterImage,
+    onDeleteClick: (String) -> Unit,
+    showDeleteButton: Boolean = false
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(320.dp)
+            .padding(8.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(NilaiApi.getIpSemesterImageUrl(ipsemesterimage.gambar))
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = stringResource(R.string.gambar, ipsemesterimage.gambar),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.loading_img),
+                    error = painterResource(id = R.drawable.baseline_broken_image_24),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                if (showDeleteButton) {
+                    IconButton(
+                        onClick = { onDeleteClick(ipsemesterimage.id) },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(id = R.string.hapus),
+                            tint = Color.White
+                        )
+                    }
+                }
 
-        Column (
-            modifier = Modifier.fillMaxWidth()
-                .background(Color(red = 0f, green = 0f, blue = 0f, alpha = 0.5f))
-                .padding(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Text(
-                text = ipsemesterimage.semester,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = ipsemesterimage.mataKuliah,
-                fontSize = 14.sp,
-                color = Color.White
-            )
+                IconButton(
+                    onClick = { /* TODO: Aksi edit */ },
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(id = R.string.edit),
+                        tint = Color.White
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = ipsemesterimage.semester,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = ipsemesterimage.mataKuliah,
+                    fontSize = 14.sp
+                )
+            }
         }
     }
 }

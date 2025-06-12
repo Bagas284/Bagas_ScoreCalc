@@ -87,4 +87,7 @@
     //ProfileScreen
     <string name="profile">Profile</string>
     <string name="logout">Keluar</string>
+
+    // DialogHapus
+    <string name="hapusGambar">Hapus gambar ini?</string>
 </resources>
