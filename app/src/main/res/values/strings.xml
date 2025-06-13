@@ -83,11 +83,14 @@
     <string name="error">Gagal memuat data.. Koneksi error.</string>
     <string name="try_again">Coba lagi</string>
     <string name="tambah_rapor">Tambah Rapor</string>
-    
+
     //ProfileScreen
     <string name="profile">Profile</string>
     <string name="logout">Keluar</string>
 
     // DialogHapus
     <string name="hapusGambar">Hapus gambar ini?</string>
+
+    //Edit Dialog
+    <string name="editGambar">Edit Gambar</string>
 </resources>

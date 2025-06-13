@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -86,7 +84,10 @@ fun ReportDisplay(navController: NavHostController) {
     val user by dataStore.userFlow.collectAsState(User())
 
     var showDeleteDialog by remember { mutableStateOf(false) }
-    var selectedHewanId by remember { mutableStateOf("") }
+    var selectedReportIdToDelete by remember { mutableStateOf("") }
+
+    var showEditDialog by remember { mutableStateOf(false) }
+    var selectedReportToEdit by remember { mutableStateOf<IpSemesterImage?>(null) }
 
     var bitmap: Bitmap? by remember { mutableStateOf(null) }
     val launcher = rememberLauncherForActivityResult(CropImageContract()) {
@@ -121,7 +122,7 @@ fun ReportDisplay(navController: NavHostController) {
                 onClick = {
                     val options = CropImageContractOptions(
                         null, CropImageOptions(
-                            imageSourceIncludeGallery = false,
+                            imageSourceIncludeGallery = true,
                             imageSourceIncludeCamera = true,
                             fixAspectRatio = true
                         )
@@ -143,8 +144,12 @@ fun ReportDisplay(navController: NavHostController) {
             user.email,
             Modifier.padding(innerPadding),
             onDelete = { id ->
-                selectedHewanId = id
+                selectedReportIdToDelete = id
                 showDeleteDialog = true
+            },
+            onEdit = { report ->
+                selectedReportToEdit = report
+                showEditDialog = true
             }
         )
 
@@ -166,10 +171,32 @@ fun ReportDisplay(navController: NavHostController) {
             DialogHapus(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    viewModel.deleteData(user.email, selectedHewanId)
+                    viewModel.deleteData(user.email, selectedReportIdToDelete)
                     showDeleteDialog = false
                 }
             )
+        }
+
+        if (showEditDialog) {
+            selectedReportToEdit?.let { report ->
+                RaporEditDialog(
+                    ipSemesterImage = report,
+                    onDismissRequest = { showEditDialog = false },
+                    onConfirmation = { id, semester, mataKuliah, bitmap ->
+                        if (bitmap != null) {
+                            viewModel.editData(user.email, id, semester, mataKuliah, bitmap)
+                            showEditDialog = false
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Silakan pilih gambar terlebih dahulu",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -179,7 +206,8 @@ fun ReportDisplayContent(
     viewModel: ApiViewModel,
     email: String,
     modifier: Modifier = Modifier,
-    onDelete: (String) -> Unit
+    onDelete: (String) -> Unit,
+    onEdit: (IpSemesterImage) -> Unit
 ) {
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
@@ -217,6 +245,7 @@ fun ReportDisplayContent(
                     ListItem(
                         ipsemesterimage = nilai,
                         onDeleteClick = onDelete,
+                        onEditClick = onEdit,
                         showDeleteButton = (nilai.mine == 1)
                     )
                 }
@@ -249,6 +278,7 @@ fun ReportDisplayContent(
 fun ListItem(
     ipsemesterimage: IpSemesterImage,
     onDeleteClick: (String) -> Unit,
+    onEditClick: (IpSemesterImage) -> Unit,
     showDeleteButton: Boolean = false
 ) {
     Card(
@@ -281,31 +311,30 @@ fun ListItem(
                         .fillMaxWidth()
                 )
                 if (showDeleteButton) {
-                    IconButton(
-                        onClick = { onDeleteClick(ipsemesterimage.id) },
+                    Column(
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp)
+                            .align(Alignment.BottomEnd),
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(id = R.string.hapus),
-                            tint = Color.White
-                        )
-                    }
-                }
+                        IconButton(
+                            onClick = { onEditClick(ipsemesterimage) },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = stringResource(id = R.string.edit),
+                                tint = Color.White
+                            )
+                        }
 
-                IconButton(
-                    onClick = { /* TODO: Aksi edit */ },
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(id = R.string.edit),
-                        tint = Color.White
-                    )
+                        IconButton(
+                            onClick = { onDeleteClick(ipsemesterimage.id) },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(id = R.string.hapus),
+                                tint = Color.White
+                            )
+                        }
+                    }
                 }
             }
 

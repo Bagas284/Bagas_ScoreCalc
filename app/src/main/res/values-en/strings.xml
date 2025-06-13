@@ -88,4 +88,10 @@
     //ProfileScreen
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
+
+    // DialogHapus
+    <string name="hapusGambar">Delete this image?</string>
+
+    //Edit Dialog
+    <string name="editGambar">Change Image</string>
 </resources>

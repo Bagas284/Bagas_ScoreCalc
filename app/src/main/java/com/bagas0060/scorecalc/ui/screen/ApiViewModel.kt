@@ -13,8 +13,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class ApiViewModel: ViewModel() {
 
@@ -70,8 +73,44 @@ class ApiViewModel: ViewModel() {
                 else
                     throw Exception(result.message)
             } catch (e: Exception) {
-                Log.d("MainViewModel", "Failure: ${e.message}")
+                Log.d("ApiViewModel", "Failure: ${e.message}")
                 errorMessage.value = "Error: ${e.message}"
+            }
+        }
+    }
+
+    fun editData(email: String, id: String, semester: String, mataKuliah: String, bitmap: Bitmap) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val file = File.createTempFile("gambar", ".jpg")
+                val outputStream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                outputStream.flush()
+                outputStream.close()
+
+                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                val gambarPart = MultipartBody.Part.createFormData("gambar", file.name, requestFile)
+
+                val methodPart = "PUT".toRequestBody("text/plain".toMediaTypeOrNull())
+                val semesterPart = semester.toRequestBody("text/plain".toMediaTypeOrNull())
+                val mataKuliahPart = mataKuliah.toRequestBody("text/plain".toMediaTypeOrNull())
+
+                val response = NilaiApi.service.updateNilai(
+                    email = email,
+                    id = id,
+                    method = methodPart,
+                    semester = semesterPart,
+                    mataKuliah = mataKuliahPart,
+                    gambar = gambarPart
+                )
+
+                if (response.status == "success")
+                    retrieveData(email)
+                else
+                    throw Exception(response.message)
+
+            } catch (e: Exception) {
+                Log.e("ApiViewModel", "Exception: ${e.message}")
             }
         }
     }

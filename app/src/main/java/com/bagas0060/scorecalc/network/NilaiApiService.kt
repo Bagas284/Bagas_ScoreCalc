@@ -47,6 +47,17 @@ interface NilaiApiService {
         @Header("Authorization") email: String,
         @Query("id") id: String
     ): OpStatus
+
+    @Multipart
+    @POST("scores")
+    suspend fun updateNilai(
+        @Header("Authorization") email: String,
+        @Query("id") id: String,
+        @Part("_method") method: RequestBody,
+        @Part("semester") semester: RequestBody,
+        @Part("mataKuliah") mataKuliah: RequestBody,
+        @Part gambar: MultipartBody.Part
+    ): OpStatus
 }
 
 object NilaiApi {
