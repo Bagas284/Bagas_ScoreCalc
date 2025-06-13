@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -240,8 +241,7 @@ fun ReportDisplayContent(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                items(data.size) { index ->
-                    val nilai = data[index]
+                items(data) { nilai ->
                     ListItem(
                         ipsemesterimage = nilai,
                         onDeleteClick = onDelete,
@@ -249,6 +249,7 @@ fun ReportDisplayContent(
                         showDeleteButton = (nilai.mine == 1)
                     )
                 }
+
             }
         }
 
@@ -313,7 +314,7 @@ fun ListItem(
                 if (showDeleteButton) {
                     Column(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd),
+                            .align(Alignment.BottomEnd)
                     ) {
                         IconButton(
                             onClick = { onEditClick(ipsemesterimage) },
