@@ -2,7 +2,13 @@
 **NIM**  : 607062300060
 
 ## Deskripsi Aplikasi
-**ScoreCalc** adalah aplikasi Android yang dirancang khusus untuk membantu mahasiswa dalam menghitung Indeks Prestasi (IP) tiap semester. Terinspirasi dari sistem penilaian akademik di Telkom University, ScoreCalc hadir sebagai solusi praktis, efisien, dan akurat untuk mendukung mahasiswa dalam mengelola data akademiknya.
+**ScoreCalc** ScoreCalc adalah aplikasi Android yang dirancang khusus untuk membantu
+mahasiswa dalam menghitung Indeks Prestasi (IP) setiap semester. Aplikasi ini juga
+dilengkapi dengan fitur penyimpanan gambar, yang memungkinkan pengguna
+menyimpan sertifikat dan rapor nilai secara praktis.
+Terinspirasi dari sistem penilaian akademik di Telkom University, ScoreCalc hadir
+sebagai solusi yang praktis, efisien, dan akurat untuk mendukung mahasiswa
+dalam mengelola data akademik mereka.
 
 ## Fitur - Fitur Aplikasi ScoreCalc
 1. **Main Screen**
@@ -36,6 +42,33 @@
     - Menampilkan data berdasarkan id
     - Tombol simpan untuk menyimpan perubahan data
     - Terdapat tombol hapus yang terletak di pojok kanan atas dan akan muncul dialog
-
+6. **Login**
+   User dapat login menggunakan akun google yang dimiliki untuk dapat
+   menggunakan fitur – fitur aplikasi. Ketika pengguna login, pengguna
+   dapat mengakses fitur hitung nilai dan upload gambar.
+7. **Profile**
+   - Pengguna dapat melihat data diri dengan menekan tombol profile di pojok kanan. Pada tampilan profile terdapat foto, nama, dan email dari pengguna yang login.
+   - Tombol Tentang Aplikasi
+   - Tombol logout: jika pengguna menekan tombol logout, pengguna akan kembali ke tampilan login.
+8. **Tampilan Rapor**
+   - Menampilkan data berdasarkan email pengguna yang login.
+   - Data disortir berdasarkan semester.
+   - Terdapat card yang berisi foto, semester, dan mata kuliah.
+   - Tombol tambah data.
+   - Tombol edit dan hapus data.
+9. **Tambah Data Ke Server**
+   - Pengguna dapat memilih opsi antara gambar atau kamera untuk menambahkan data gambar.
+   - Pengguna dapat crop gambar sesuai yang diinginkan.
+   - Pengguna harus mengisi semua form input supaya dapat kirim data ke server.Pengguna dapat memilih opsi antara gambar atau kamera untuk menambahkan data
+     gambar.
+   - Pengguna dapat crop gambar sesuai yang diinginkan.
+   - Pengguna harus mengisi semua form input supaya dapat kirim data ke server.
+10. **Hapus Data Dari Server**
+    Pengguna dapat menghapus data dengan menekan tombol hapus.
+    Ketika pengguna menekan tombol hapus, maka akan muncul dialog
+    konfirmasi.
+11. **Edit Data**
+    Pengguna dapat mengedit data dengan menekan tombol edit. Pengguna
+    Dapat edit data berupa gambar, semester, dan mata kuliah.
 
 

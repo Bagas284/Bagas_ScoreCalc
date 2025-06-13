@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.bagas0060.scorecalc.model.User
 import com.bagas0060.scorecalc.ui.screen.AboutScreen
 import com.bagas0060.scorecalc.ui.screen.DisplayIpSemester
 import com.bagas0060.scorecalc.ui.screen.HitungIPScreen
