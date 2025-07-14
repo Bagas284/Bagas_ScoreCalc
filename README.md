@@ -71,4 +71,4 @@ dalam mengelola data akademik mereka.
     Pengguna dapat mengedit data dengan menekan tombol edit. Pengguna
     Dapat edit data berupa gambar, semester, dan mata kuliah.
 
-
+[![My Skills](https://skillicons.dev/icons?i=kotlin,androidstudio)](https://skillicons.dev)
